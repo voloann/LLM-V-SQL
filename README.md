@@ -37,6 +37,14 @@ Demo Test-to-SQL/
 │       └── superhero.sqlite
 ```
 
+## Cách chạy
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 run_demo_LLM.py
+```
+
 
 
 
