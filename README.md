@@ -1,18 +1,23 @@
 # LLM-V
 
 ## Dataset của paper
+```
 Link git: https://bird-bench.github.io/
 Link dataset: https://github.com/bird-bench/mini_dev
-Câu để truy vấn trong paper: https://huggingface.co/datasets/birdsql/bird_mini_dev/viewer/default/mini_dev_mysql?row=0 
+Câu để truy vấn trong paper: https://huggingface.co/datasets/birdsql/bird_mini_dev/viewer/default/mini_dev_mysql?row=0
+```
 
 
 ## Tổng quan
+```
 Ngôn ngữ sử dụng: python
 CSDL để chạy: SQLlite
 CSDL test trong đây là superhero
 Tổng số câu test là 6 câu
+```
 
 ## Thư mục
+```
 Demo Test-to-SQL/
 ├── .venv/: mô trường python ảo cần tạo
 ├── config.py: chỉnh sửa mô hình LM studio
@@ -30,6 +35,7 @@ Demo Test-to-SQL/
 ├── mini_dev_databases/
 │   └── superhero/
 │       └── superhero.sqlite
+```
 
 
 
