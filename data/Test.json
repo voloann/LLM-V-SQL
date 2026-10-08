@@ -1,0 +1,51 @@
+[
+  {
+    "question_id": 717,
+    "db_id": "superhero",
+    "question": "Please list all the superpowers of 3-D Man.",
+    "evidence": "3-D Man refers to superhero_name = '3-D Man'; superpowers refers to power_name",
+    "SQL": "SELECT T3.power_name FROM superhero AS T1 INNER JOIN hero_power AS T2 ON T1.id = T2.hero_id INNER JOIN superpower AS T3 ON T2.power_id = T3.id WHERE T1.superhero_name = '3-D Man'",
+    "difficulty": "simple"
+  },
+  {
+    "question_id": 719,
+    "db_id": "superhero",
+    "question": "Among the superheroes with the super power of \"Super Strength\", how many of them have a height of over 200cm?",
+    "evidence": "super power of \"Super Strength\" refers to power_name = 'Super Strength'; a height of over 200cm refers to height_cm > 200",
+    "SQL": "SELECT COUNT(T1.id) FROM superhero AS T1 INNER JOIN hero_power AS T2 ON T1.id = T2.hero_id INNER JOIN superpower AS T3 ON T2.power_id = T3.id WHERE T3.power_name = 'Super Strength' AND T1.height_cm > 200",
+    "difficulty": "moderate"
+  },
+  {
+    "question_id": 723,
+    "db_id": "superhero",
+    "question": "Among the superheroes with blue eyes, how many of them have the super power of \"Agility\"?",
+    "evidence": "blue eyes refers to colour = 'Blue' and eye_colour_id = colour.id; super power of \"Agility\" refers to power_name = 'Agility'",
+    "SQL": "SELECT COUNT(T1.id) FROM superhero AS T1 INNER JOIN hero_power AS T2 ON T1.id = T2.hero_id INNER JOIN superpower AS T3 ON T2.power_id = T3.id INNER JOIN colour AS T4 ON T1.eye_colour_id = T4.id WHERE T3.power_name = 'Agility' AND T4.colour = 'Blue'",
+    "difficulty": "moderate"
+  },
+  {
+    "question_id": 724,
+    "db_id": "superhero",
+    "question": "Please list the superhero names of all the superheroes that have blue eyes and blond hair.",
+    "evidence": "blue eyes refers to colour = 'Blue' and eye_colour_id = colour.id; blond hair refers to colour = 'Blond' and hair_colour_id = colour.id; super power of \"Agility\" refers to power_name = 'Agility'",
+    "SQL": "SELECT T1.superhero_name FROM superhero AS T1 INNER JOIN colour AS T2 ON T1.eye_colour_id = T2.id INNER JOIN colour AS T3 ON T1.hair_colour_id = T3.id WHERE T2.colour = 'Blue' AND T3.colour = 'Blond'",
+    "difficulty": "challenging"
+  }
+  ,
+  {
+    "question_id": 724,
+    "db_id": "superhero",
+    "question": "Please list the superhero names of all the superheroes that have blue eyes and blond hair.",
+    "evidence": "blue eyes refers to colour = 'Blue' and eye_colour_id = colour.id; blond hair refers to colour = 'Blond' and hair_colour_id = colour.id; super power of \"Agility\" refers to power_name = 'Agility'",
+    "SQL": "SELECT T1.superhero_name FROM superhero AS T1 INNER JOIN colour AS T2 ON T1.eye_colour_id = T2.id INNER JOIN colour AS T3 ON T1.hair_colour_id = T3.id WHERE T2.colour = 'Blue' AND T3.colour = 'Blond'",
+    "difficulty": "challenging"
+  },
+  {
+    "question_id": 726,
+    "db_id": "superhero",
+    "question": "Rank heroes published by Marvel Comics by their height in descending order.",
+    "evidence": "name refers to superhero_name; the tallest hero refers to MAX(height_cm); published by Marvel Comics refers to publisher_name = 'Marvel Comics'",
+    "SQL": "SELECT superhero_name, height_cm, RANK() OVER (ORDER BY height_cm DESC) AS HeightRank FROM superhero INNER JOIN publisher ON superhero.publisher_id = publisher.id WHERE publisher.publisher_name = 'Marvel Comics'",
+    "difficulty": "moderate"
+  }
+]
