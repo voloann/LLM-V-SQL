@@ -44,6 +44,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 python3 run_demo_LLM.py
 ```
+Khi chạy xong sẽ tạo ra 2 file: view_mappings.json (bước 0) và predict_dev.json (file json dự đoán kết quả)
 
 
 
