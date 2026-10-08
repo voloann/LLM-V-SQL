@@ -12,6 +12,7 @@ Câu để truy vấn trong paper: https://huggingface.co/datasets/birdsql/bird_
 ```
 Ngôn ngữ sử dụng: python
 CSDL để chạy: SQLlite
+Mô hình LLM: local thông qua LM studio (mô hình hiện tại là qwen/qwen3-4b-2507
 CSDL test trong đây là superhero
 Tổng số câu test là 6 câu
 ```
