@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+*.egg-info/
+.pytest_cache/
+
+# Node.js & Web build
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
+.npm/
+
+# Large Datasets & Archives (> 100MB, exceeds GitHub limit)
+minidev.zip
+mini_dev_databases/*/
+!mini_dev_databases/superhero/
+
+# Logs & System
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

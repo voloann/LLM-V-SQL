@@ -1,0 +1,41 @@
+{
+  "db_id": "toxicology",
+  "mode": "manual",
+  "db_untouched": true,
+  "views": [
+    {
+      "name": "v_atom_molecule",
+      "columns": [
+        "atom_id",
+        "molecule_id",
+        "element",
+        "molecule_label"
+      ],
+      "source_tables": [
+        "atom",
+        "molecule"
+      ],
+      "create_sql": "/* Views thu cong cho database toxicology (Paper V-SQL style) */ /* 1. View ket hop atom va molecule */ CREATE VIEW v_atom_molecule AS SELECT atom.atom_id, atom.molecule_id, atom.element, molecule.label AS molecule_label FROM atom LEFT JOIN molecule ON atom.molecule_id = molecule.molecule_id",
+      "valid": true,
+      "row_count": 9111,
+      "error": null
+    },
+    {
+      "name": "v_bond_molecule",
+      "columns": [
+        "bond_id",
+        "molecule_id",
+        "bond_type",
+        "molecule_label"
+      ],
+      "source_tables": [
+        "bond",
+        "molecule"
+      ],
+      "create_sql": "/* 2. View ket hop bond va molecule */ CREATE VIEW v_bond_molecule AS SELECT bond.bond_id, bond.molecule_id, bond.bond_type, molecule.label AS molecule_label FROM bond LEFT JOIN molecule ON bond.molecule_id = molecule.molecule_id",
+      "valid": true,
+      "row_count": 9156,
+      "error": null
+    }
+  ]
+}

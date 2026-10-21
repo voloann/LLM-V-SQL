@@ -1,0 +1,26 @@
+{
+  "run_id": "20261015-2351_direct_manual_superhero",
+  "method": "direct",
+  "view_mode": "manual",
+  "scope": "superhero",
+  "num_queries": 52,
+  "model": "qwen2.5-coder-7b-instruct",
+  "EX": {
+    "simple": 85.71428571428571,
+    "moderate": 80.76923076923077,
+    "challenging": 50.0,
+    "total": 75.0
+  },
+  "EM_strict": {
+    "simple": 35.71,
+    "moderate": 19.23,
+    "challenging": 0.0,
+    "all": 19.23
+  },
+  "EM_normalized": {
+    "simple": 50.0,
+    "moderate": 19.23,
+    "challenging": 8.33,
+    "all": 25.0
+  }
+}

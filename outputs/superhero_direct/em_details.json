@@ -1,0 +1,391 @@
+{
+  "metrics": {
+    "total_queries": 52,
+    "parse_errors": 0,
+    "parse_error_pct": 0.0,
+    "strict": {
+      "simple": 35.71,
+      "moderate": 19.23,
+      "challenging": 0.0,
+      "all": 19.23
+    },
+    "normalized": {
+      "simple": 50.0,
+      "moderate": 19.23,
+      "challenging": 8.33,
+      "all": 25.0
+    },
+    "counts": {
+      "simple": 14,
+      "moderate": 26,
+      "challenging": 12,
+      "all": 52
+    }
+  },
+  "details": [
+    {
+      "question_id": "717",
+      "difficulty": "simple",
+      "em_strict": 0,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "719",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "723",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "724",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "726",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "728",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "730",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "732",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "733",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "736",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "737",
+      "difficulty": "simple",
+      "em_strict": 1,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "738",
+      "difficulty": "simple",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "739",
+      "difficulty": "moderate",
+      "em_strict": 1,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "740",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "743",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "744",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "745",
+      "difficulty": "simple",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "747",
+      "difficulty": "simple",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "750",
+      "difficulty": "simple",
+      "em_strict": 0,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "751",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "753",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "758",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "760",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "761",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "764",
+      "difficulty": "simple",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "765",
+      "difficulty": "simple",
+      "em_strict": 1,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "766",
+      "difficulty": "moderate",
+      "em_strict": 1,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "769",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "772",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "773",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "775",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "779",
+      "difficulty": "simple",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "781",
+      "difficulty": "simple",
+      "em_strict": 1,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "782",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "785",
+      "difficulty": "simple",
+      "em_strict": 1,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "786",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "788",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "790",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "791",
+      "difficulty": "simple",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "792",
+      "difficulty": "simple",
+      "em_strict": 1,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "794",
+      "difficulty": "moderate",
+      "em_strict": 1,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "796",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "797",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "798",
+      "difficulty": "moderate",
+      "em_strict": 1,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "800",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "801",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "806",
+      "difficulty": "simple",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "819",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "822",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "824",
+      "difficulty": "moderate",
+      "em_strict": 1,
+      "em_norm": 1,
+      "parse_error": false
+    },
+    {
+      "question_id": "825",
+      "difficulty": "moderate",
+      "em_strict": 0,
+      "em_norm": 0,
+      "parse_error": false
+    },
+    {
+      "question_id": "829",
+      "difficulty": "challenging",
+      "em_strict": 0,
+      "em_norm": 1,
+      "parse_error": false
+    }
+  ]
+}

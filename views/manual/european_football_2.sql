@@ -1,0 +1,69 @@
+-- Views thu cong cho database european_football_2 (Paper V-SQL style)
+
+-- 1. View ket hop thong tin cau thu va chi so Player_Attributes
+CREATE VIEW v_player_stats AS
+SELECT
+    Player.id AS player_id,
+    Player.player_api_id,
+    Player.player_name,
+    Player.birthday,
+    Player.height,
+    Player.weight,
+    Player_Attributes.date AS attribute_date,
+    Player_Attributes.overall_rating,
+    Player_Attributes.potential,
+    Player_Attributes.preferred_foot,
+    Player_Attributes.attacking_work_rate,
+    Player_Attributes.defensive_work_rate,
+    Player_Attributes.crossing,
+    Player_Attributes.finishing,
+    Player_Attributes.heading_accuracy,
+    Player_Attributes.short_passing,
+    Player_Attributes.dribbling,
+    Player_Attributes.free_kick_accuracy,
+    Player_Attributes.ball_control,
+    Player_Attributes.acceleration,
+    Player_Attributes.sprint_speed,
+    Player_Attributes.stamina,
+    Player_Attributes.strength,
+    Player_Attributes.penalties
+FROM Player
+LEFT JOIN Player_Attributes ON Player.player_api_id = Player_Attributes.player_api_id;
+
+-- 2. View ket hop thong tin doi bong va chi so Team_Attributes
+CREATE VIEW v_team_stats AS
+SELECT
+    Team.id AS team_id,
+    Team.team_api_id,
+    Team.team_long_name,
+    Team.team_short_name,
+    Team_Attributes.date AS attribute_date,
+    Team_Attributes.buildUpPlaySpeed AS build_up_play_speed,
+    Team_Attributes.buildUpPlayPassing AS build_up_play_passing,
+    Team_Attributes.chanceCreationPassing AS chance_creation_passing,
+    Team_Attributes.chanceCreationCrossing AS chance_creation_crossing,
+    Team_Attributes.chanceCreationShooting AS chance_creation_shooting,
+    Team_Attributes.defencePressure AS defence_pressure,
+    Team_Attributes.defenceAggression AS defence_aggression,
+    Team_Attributes.defenceTeamWidth AS defence_team_width
+FROM Team
+LEFT JOIN Team_Attributes ON Team.team_api_id = Team_Attributes.team_api_id;
+
+-- 3. View tran dau kem thong tin giai dau, quoc gia va 2 doi thi dau
+CREATE VIEW v_match_details AS
+SELECT
+    Match.id AS match_id,
+    Match.season,
+    Match.stage,
+    Match.date AS match_date,
+    Match.home_team_goal,
+    Match.away_team_goal,
+    League.name AS league_name,
+    Country.name AS country_name,
+    home_team.team_long_name AS home_team_name,
+    away_team.team_long_name AS away_team_name
+FROM Match
+LEFT JOIN League ON Match.league_id = League.id
+LEFT JOIN Country ON Match.country_id = Country.id
+LEFT JOIN Team home_team ON Match.home_team_api_id = home_team.team_api_id
+LEFT JOIN Team away_team ON Match.away_team_api_id = away_team.team_api_id;

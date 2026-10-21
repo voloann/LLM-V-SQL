@@ -1,0 +1,14 @@
+{
+  "name": "llm-v-sql",
+  "private": true,
+  "version": "1.0.0",
+  "description": "V-SQL Studio — View-based Two-stage Text-to-SQL Framework",
+  "scripts": {
+    "dev": "concurrently -k -n \"BACKEND,FRONTEND\" -c \"cyan.bold,magenta.bold\" \"python api_server.py\" \"npm run dev --prefix frontend\"",
+    "build": "npm run build --prefix frontend",
+    "start": "python api_server.py"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

@@ -1,5 +1,10 @@
 openai>=1.0.0
 python-dotenv
 sqlparse
+sqlglot>=25
+func_timeout
 tqdm
+pandas
+fastapi
+uvicorn
 

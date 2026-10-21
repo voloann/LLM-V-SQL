@@ -1,0 +1,26 @@
+{
+  "run_id": "20261016-0007_vsql_manual_superhero",
+  "method": "vsql",
+  "view_mode": "manual",
+  "scope": "superhero",
+  "num_queries": 52,
+  "model": "qwen2.5-coder-7b-instruct",
+  "EX": {
+    "simple": 64.28571428571429,
+    "moderate": 53.84615384615385,
+    "challenging": 33.33333333333333,
+    "total": 51.92307692307693
+  },
+  "EM_strict": {
+    "simple": 7.14,
+    "moderate": 0.0,
+    "challenging": 0.0,
+    "all": 1.92
+  },
+  "EM_normalized": {
+    "simple": 7.14,
+    "moderate": 0.0,
+    "challenging": 0.0,
+    "all": 1.92
+  }
+}

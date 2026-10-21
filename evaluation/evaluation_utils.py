@@ -1,6 +1,4 @@
 import json
-import psycopg2
-import pymysql
 import sqlite3
 
 def load_jsonl(file_path):
@@ -16,28 +14,24 @@ def load_json(dir):
     return contents
 
 
-# psycopg2   2.9.9
 def connect_postgresql():
-    # Open database connection
-    # Connect to the database
+    # Lazy import to avoid dependency when using SQLite
+    import psycopg2
     db = psycopg2.connect(
         "dbname=bird user=postgres host=localhost password=li123911 port=5432"
     )
     return db
 
 
-# PyMySQL  1.1.1
 def connect_mysql():
-    # Open database connection
-    # Connect to the database"
+    # Lazy import to avoid dependency when using SQLite
+    import pymysql
     db = pymysql.connect(
         host="localhost",
         user="root",
         password="li123911",
         database="BIRD",
-        # unix_socket="/tmp/mysql.sock",
         unix_socket="/var/run/mysqld/mysqld.sock"
-        # port=3306,
     )
     return db
 
