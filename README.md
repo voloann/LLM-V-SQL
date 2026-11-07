@@ -18,6 +18,46 @@ npm run dev
 * 🖥️ **Giao diện Web Frontend (Hot-reload):** `http://localhost:5173`
 * ⚙️ **Backend API & Swagger Docs:** `http://localhost:8000` (Docs: `http://localhost:8000/docs`)
 * Bấm `Ctrl + C` để tắt đồng thời cả Backend và Frontend.
+* Trên macOS/Linux, kích hoạt `.venv` trước để có lệnh `python`.
+* Nếu port 8000 đã bị chiếm, đổi port backend (frontend tự proxy theo): `API_PORT=8001 npm run dev`
+
+---
+
+## Demo báo cáo
+
+Sau khi chạy `npm run dev`, mở hai trang đầu của mục **Tương tác & Học thuật** ở thanh bên:
+
+- **Hành trình thực nghiệm:** các lần chạy theo thứ tự thực hiện, lý do của từng lần và kết quả.
+- **Chạy pipeline từng bước:** chọn câu hỏi, framework, model, bộ view, rồi xem đầu vào và đầu ra của từng bước.
+  - *Phát lại kết quả đã lưu:* không gọi model, không tốn tiền, không cần mạng. Nên dùng khi trình bày.
+  - *Gọi model thật:* cần Ollama đang chạy cho model cục bộ, hoặc API key ở `~/.config/llm-v-sql/llm.key` cho GPT-6 Luna. Key chỉ nằm ở server, mỗi lần chạy có hạn mức tiền riêng.
+
+## Tái lập kết quả
+
+```bash
+python build_views.py                                # tạo views/fk, views/gold, views/paper và views/coverage_report.json
+scripts/run_view_extension_benchmark.sh 0.6          # V-SQL 500 câu với 3 bộ view, tối đa $0.60 mỗi lượt
+python scripts/analyze_view_extension.py             # so sánh theo từng câu, ghi outputs/view_extension_analysis.json
+python scripts/run_benchmark.py outputs/<thư_mục> gpt-6-luna --view-mode manual --schema-mode described --budget 1
+```
+
+`run_benchmark.py` đọc `outputs/<thư_mục>/questions.json`, dùng lại trace đã có nên chạy tiếp được khi bị ngắt, và chấm trên kết nối chỉ đọc tới bảng gốc. Mẫu 100 câu tạo bằng `scripts/make_sample.py`, kết quả 7B được chấm lại bằng `scripts/rescore_physical.py`.
+
+| Bộ view | Cách tạo | Lưu ý |
+|---|---|---|
+| `manual` | 27 view viết tay từ các phép join trong gold SQL | Phủ 279/798 cột |
+| `paper` | `manual` thêm các cột gold SQL cần, cộng view `LEFT JOIN` cho tổ hợp bảng dùng từ 3 câu trở lên | **Cấu hình chính.** Bám cách paper mô tả nhưng không phải bộ view của paper, vì paper không công bố |
+| `fk` | `manual` thêm mọi cột, và thêm view cho từng bảng còn thiếu theo khóa ngoại | Mở rộng của nhóm. Phần mở rộng không đọc gold SQL |
+| `gold` | `manual` thêm đúng cột và mọi tổ hợp join mà gold SQL cần | Đối chứng cho cảnh báo của paper. View INNER JOIN có thể làm mất dòng |
+
+Kết quả cấu hình chính (view `paper`, schema có kiểu và mô tả cột, 500 câu, chấm trên bảng gốc, mỗi model chạy một lần). `scripts/run_main_config_benchmark.sh` chạy lại 3 model Qwen.
+
+| Model | Direct | Stage 1 | V-SQL | Chỉ Direct đúng / chỉ V-SQL đúng | p |
+|---|---|---|---|---|---|
+| Qwen3 4B | 47.4% | 36.6% | 42.2% | 66 / 40 | 0.015 |
+| Qwen2.5-Coder 7B | 49.8% | 36.2% | 38.6% | 92 / 36 | < 0.001 |
+| Qwen2.5-Coder 32B | 56.2% | 47.4% | 54.2% | 47 / 37 | 0.33 |
+| GPT-6 Luna | 61.4% | 53.8% | 58.6% | 42 / 28 | 0.12 |
 
 ---
 

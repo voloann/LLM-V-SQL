@@ -1,0 +1,393 @@
+{
+  "totals": {
+    "manual": {
+      "views": 27,
+      "view_columns": 328,
+      "distinct_columns_exposed": 279,
+      "questions_with_gap": 453
+    },
+    "fk": {
+      "views": 47,
+      "view_columns": 1474,
+      "distinct_columns_exposed": 798,
+      "questions_with_gap": 44
+    },
+    "gold": {
+      "views": 90,
+      "view_columns": 1584,
+      "distinct_columns_exposed": 505,
+      "questions_with_gap": 0
+    },
+    "paper": {
+      "views": 43,
+      "view_columns": 867,
+      "distinct_columns_exposed": 471,
+      "questions_with_gap": 46
+    }
+  },
+  "by_db": {
+    "california_schools": {
+      "tables": 3,
+      "columns": 89,
+      "questions": 30,
+      "manual": {
+        "views": 1,
+        "view_columns": 24,
+        "distinct_columns_exposed": 24,
+        "questions_with_gap": 29,
+        "invalid_views": []
+      },
+      "fk": {
+        "views": 1,
+        "view_columns": 89,
+        "distinct_columns_exposed": 89,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "gold": {
+        "views": 1,
+        "view_columns": 59,
+        "distinct_columns_exposed": 59,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "paper": {
+        "views": 1,
+        "view_columns": 59,
+        "distinct_columns_exposed": 59,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      }
+    },
+    "card_games": {
+      "tables": 6,
+      "columns": 115,
+      "questions": 52,
+      "manual": {
+        "views": 3,
+        "view_columns": 42,
+        "distinct_columns_exposed": 34,
+        "questions_with_gap": 45,
+        "invalid_views": []
+      },
+      "fk": {
+        "views": 5,
+        "view_columns": 358,
+        "distinct_columns_exposed": 115,
+        "questions_with_gap": 5,
+        "invalid_views": []
+      },
+      "gold": {
+        "views": 9,
+        "view_columns": 264,
+        "distinct_columns_exposed": 59,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "paper": {
+        "views": 6,
+        "view_columns": 158,
+        "distinct_columns_exposed": 59,
+        "questions_with_gap": 5,
+        "invalid_views": []
+      }
+    },
+    "codebase_community": {
+      "tables": 8,
+      "columns": 71,
+      "questions": 49,
+      "manual": {
+        "views": 2,
+        "view_columns": 25,
+        "distinct_columns_exposed": 20,
+        "questions_with_gap": 46,
+        "invalid_views": []
+      },
+      "fk": {
+        "views": 7,
+        "view_columns": 253,
+        "distinct_columns_exposed": 71,
+        "questions_with_gap": 1,
+        "invalid_views": []
+      },
+      "gold": {
+        "views": 14,
+        "view_columns": 224,
+        "distinct_columns_exposed": 50,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "paper": {
+        "views": 3,
+        "view_columns": 77,
+        "distinct_columns_exposed": 35,
+        "questions_with_gap": 12,
+        "invalid_views": []
+      }
+    },
+    "debit_card_specializing": {
+      "tables": 5,
+      "columns": 21,
+      "questions": 30,
+      "manual": {
+        "views": 2,
+        "view_columns": 18,
+        "distinct_columns_exposed": 18,
+        "questions_with_gap": 25,
+        "invalid_views": []
+      },
+      "fk": {
+        "views": 2,
+        "view_columns": 21,
+        "distinct_columns_exposed": 21,
+        "questions_with_gap": 8,
+        "invalid_views": []
+      },
+      "gold": {
+        "views": 7,
+        "view_columns": 86,
+        "distinct_columns_exposed": 21,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "paper": {
+        "views": 3,
+        "view_columns": 32,
+        "distinct_columns_exposed": 21,
+        "questions_with_gap": 5,
+        "invalid_views": []
+      }
+    },
+    "european_football_2": {
+      "tables": 7,
+      "columns": 199,
+      "questions": 51,
+      "manual": {
+        "views": 3,
+        "view_columns": 47,
+        "distinct_columns_exposed": 45,
+        "questions_with_gap": 46,
+        "invalid_views": []
+      },
+      "fk": {
+        "views": 3,
+        "view_columns": 209,
+        "distinct_columns_exposed": 199,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "gold": {
+        "views": 3,
+        "view_columns": 72,
+        "distinct_columns_exposed": 64,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "paper": {
+        "views": 3,
+        "view_columns": 72,
+        "distinct_columns_exposed": 64,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      }
+    },
+    "financial": {
+      "tables": 8,
+      "columns": 55,
+      "questions": 32,
+      "manual": {
+        "views": 3,
+        "view_columns": 24,
+        "distinct_columns_exposed": 17,
+        "questions_with_gap": 31,
+        "invalid_views": []
+      },
+      "fk": {
+        "views": 7,
+        "view_columns": 95,
+        "distinct_columns_exposed": 55,
+        "questions_with_gap": 12,
+        "invalid_views": []
+      },
+      "gold": {
+        "views": 14,
+        "view_columns": 190,
+        "distinct_columns_exposed": 39,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "paper": {
+        "views": 4,
+        "view_columns": 55,
+        "distinct_columns_exposed": 27,
+        "questions_with_gap": 9,
+        "invalid_views": []
+      }
+    },
+    "formula_1": {
+      "tables": 13,
+      "columns": 94,
+      "questions": 66,
+      "manual": {
+        "views": 3,
+        "view_columns": 44,
+        "distinct_columns_exposed": 32,
+        "questions_with_gap": 63,
+        "invalid_views": []
+      },
+      "fk": {
+        "views": 9,
+        "view_columns": 201,
+        "distinct_columns_exposed": 94,
+        "questions_with_gap": 2,
+        "invalid_views": []
+      },
+      "gold": {
+        "views": 14,
+        "view_columns": 225,
+        "distinct_columns_exposed": 73,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "paper": {
+        "views": 6,
+        "view_columns": 128,
+        "distinct_columns_exposed": 66,
+        "questions_with_gap": 5,
+        "invalid_views": []
+      }
+    },
+    "student_club": {
+      "tables": 8,
+      "columns": 48,
+      "questions": 48,
+      "manual": {
+        "views": 3,
+        "view_columns": 33,
+        "distinct_columns_exposed": 29,
+        "questions_with_gap": 41,
+        "invalid_views": []
+      },
+      "fk": {
+        "views": 5,
+        "view_columns": 96,
+        "distinct_columns_exposed": 48,
+        "questions_with_gap": 1,
+        "invalid_views": []
+      },
+      "gold": {
+        "views": 9,
+        "view_columns": 134,
+        "distinct_columns_exposed": 45,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "paper": {
+        "views": 5,
+        "view_columns": 80,
+        "distinct_columns_exposed": 45,
+        "questions_with_gap": 4,
+        "invalid_views": []
+      }
+    },
+    "superhero": {
+      "tables": 10,
+      "columns": 31,
+      "questions": 52,
+      "manual": {
+        "views": 3,
+        "view_columns": 19,
+        "distinct_columns_exposed": 13,
+        "questions_with_gap": 49,
+        "invalid_views": []
+      },
+      "fk": {
+        "views": 3,
+        "view_columns": 59,
+        "distinct_columns_exposed": 31,
+        "questions_with_gap": 6,
+        "invalid_views": []
+      },
+      "gold": {
+        "views": 7,
+        "view_columns": 133,
+        "distinct_columns_exposed": 31,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "paper": {
+        "views": 3,
+        "view_columns": 59,
+        "distinct_columns_exposed": 31,
+        "questions_with_gap": 6,
+        "invalid_views": []
+      }
+    },
+    "thrombosis_prediction": {
+      "tables": 3,
+      "columns": 64,
+      "questions": 50,
+      "manual": {
+        "views": 2,
+        "view_columns": 44,
+        "distinct_columns_exposed": 40,
+        "questions_with_gap": 44,
+        "invalid_views": []
+      },
+      "fk": {
+        "views": 2,
+        "view_columns": 71,
+        "distinct_columns_exposed": 64,
+        "questions_with_gap": 5,
+        "invalid_views": []
+      },
+      "gold": {
+        "views": 4,
+        "view_columns": 149,
+        "distinct_columns_exposed": 53,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "paper": {
+        "views": 3,
+        "view_columns": 108,
+        "distinct_columns_exposed": 53,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      }
+    },
+    "toxicology": {
+      "tables": 4,
+      "columns": 11,
+      "questions": 40,
+      "manual": {
+        "views": 2,
+        "view_columns": 8,
+        "distinct_columns_exposed": 7,
+        "questions_with_gap": 34,
+        "invalid_views": []
+      },
+      "fk": {
+        "views": 3,
+        "view_columns": 22,
+        "distinct_columns_exposed": 11,
+        "questions_with_gap": 4,
+        "invalid_views": []
+      },
+      "gold": {
+        "views": 8,
+        "view_columns": 48,
+        "distinct_columns_exposed": 11,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      },
+      "paper": {
+        "views": 6,
+        "view_columns": 39,
+        "distinct_columns_exposed": 11,
+        "questions_with_gap": 0,
+        "invalid_views": []
+      }
+    }
+  }
+}

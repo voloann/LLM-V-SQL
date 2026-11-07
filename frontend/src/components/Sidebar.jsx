@@ -11,10 +11,12 @@ import {
   Sparkles,
   CheckCircle2,
   ExternalLink,
-  Activity
+  Activity,
+  Route,
+  Workflow
 } from 'lucide-react';
 
-export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollapsed, health }) {
+export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollapsed, health, runs }) {
   const sections = [
     {
       title: 'TỔNG QUAN & KẾT QUẢ',
@@ -26,6 +28,8 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed, setCollaps
     {
       title: 'TƯƠNG TÁC & HỌC THUẬT',
       items: [
+        { id: 'journey', label: 'Hành trình thực nghiệm', icon: Route, badge: runs?.length ? `${runs.length} lần chạy` : 'Lần chạy' },
+        { id: 'pipeline', label: 'Chạy pipeline từng bước', icon: Workflow, badge: '4 model' },
         { id: 'playground', label: 'Phòng Thử nghiệm', icon: Play, badge: 'Live' },
         { id: 'architecture', label: 'Kiến trúc Framework', icon: Layers, badge: 'V-SQL' },
         { id: 'views_catalog', label: 'Kho Views Ảo & Lược đồ', icon: Database, badge: '11 CSDL' },

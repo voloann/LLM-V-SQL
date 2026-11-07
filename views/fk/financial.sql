@@ -1,0 +1,13 @@
+CREATE VIEW v_client_district AS SELECT client.client_id, client.gender, client.birth_date, district.district_id, district.A2 AS district_name, district.A3 AS region, district.A4 AS no_of_inhabitants, district.A11 AS avg_salary, client.district_id AS client_district_id, district.A5, district.A6, district.A7, district.A8, district.A9, district.A10, district.A12, district.A13, district.A14, district.A15, district.A16 FROM client LEFT JOIN district ON client.district_id = district.district_id;
+
+CREATE VIEW v_account_district AS SELECT account.account_id, account.frequency, account.date AS account_created_date, district.district_id, district.A2 AS district_name, district.A3 AS region, district.A11 AS avg_salary, account.district_id AS account_district_id, district.A4, district.A5, district.A6, district.A7, district.A8, district.A9, district.A10, district.A12, district.A13, district.A14, district.A15, district.A16 FROM account LEFT JOIN district ON account.district_id = district.district_id;
+
+CREATE VIEW v_account_loan AS SELECT account.account_id, account.frequency, account.date AS account_date, loan.loan_id, loan.date AS loan_date, loan.amount AS loan_amount, loan.duration AS loan_duration, loan.payments AS loan_payments, loan.status AS loan_status, account.district_id, loan.account_id AS loan_account_id FROM account LEFT JOIN loan ON account.account_id = loan.account_id;
+
+CREATE VIEW v_card AS SELECT card.card_id, card.disp_id, card.type, card.issued, disp.disp_id AS disp_disp_id, disp.client_id, disp.account_id, disp.type AS disp_type FROM card LEFT JOIN disp ON card.disp_id = disp.disp_id;
+
+CREATE VIEW v_disp AS SELECT disp.disp_id, disp.client_id, disp.account_id, disp.type, client.client_id AS client_client_id, client.gender, client.birth_date, client.district_id, account.account_id AS account_account_id, account.district_id AS account_district_id, account.frequency, account.date FROM disp LEFT JOIN client ON disp.client_id = client.client_id LEFT JOIN account ON disp.account_id = account.account_id;
+
+CREATE VIEW v_order AS SELECT "order".order_id, "order".account_id, "order".bank_to, "order".account_to, "order".amount, "order".k_symbol, account.account_id AS account_account_id, account.district_id, account.frequency, account.date FROM "order" LEFT JOIN account ON "order".account_id = account.account_id;
+
+CREATE VIEW v_trans AS SELECT trans.trans_id, trans.account_id, trans.date, trans.type, trans.operation, trans.amount, trans.balance, trans.k_symbol, trans.bank, trans.account, account.account_id AS account_account_id, account.district_id, account.frequency, account.date AS account_date FROM trans LEFT JOIN account ON trans.account_id = account.account_id;

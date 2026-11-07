@@ -80,7 +80,8 @@ def format_view_schema_header(views: list[dict]) -> str:
         name = v.get("name", "")
         cols = v.get("columns", [])
         if cols:
-            lines.append(f"{name}({', '.join(cols)})")
+            shown = [c if re.fullmatch(r"\w+", c) else f'"{c}"' for c in cols]
+            lines.append(f"{name}({', '.join(shown)})")
         else:
             lines.append(f"{name}")
     return "\n".join(lines)

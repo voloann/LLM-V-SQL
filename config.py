@@ -4,6 +4,12 @@ import os
 LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "http://localhost:1234/v1")
 LLM_API_KEY = os.environ.get("LLM_API_KEY", "lm-studio")
 SELECTED_MODEL = os.environ.get("SELECTED_MODEL", "qwen2.5-coder-7b-instruct")
+# Newer OpenAI models reject max_tokens and only allow temperature 0 with reasoning off.
+LLM_TOKEN_PARAM = os.environ.get("LLM_TOKEN_PARAM", "max_tokens")
+LLM_REASONING_EFFORT = os.environ.get("LLM_REASONING_EFFORT", "")
+
+# --- Backend API Settings ---
+API_PORT = int(os.environ.get("API_PORT", "8000"))
 
 # --- Paper hyperparameters (Section 5.1 of V-SQL Paper) ---
 TEMPERATURE = 0.0

@@ -6,16 +6,21 @@ import Playground from './pages/Playground';
 import Explorer from './pages/Explorer';
 import Architecture from './pages/Architecture';
 import ViewsCatalog from './pages/ViewsCatalog';
+import PipelineDemo from './pages/PipelineDemo';
+import Journey from './pages/Journey';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => window.innerWidth < 1000);
   
   const [health, setHealth] = useState(null);
   const [experiments, setExperiments] = useState(null);
   const [databases, setDatabases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [playgroundPrefill, setPlaygroundPrefill] = useState(null);
+  const [pipelinePrefill, setPipelinePrefill] = useState(null);
+  const [runs, setRuns] = useState([]);
+  const [main, setMain] = useState({ keys: [], mechanism: {} });
 
   const handleTryQuestion = (item) => {
     setPlaygroundPrefill({
@@ -41,14 +46,17 @@ export default function App() {
   useEffect(() => {
     async function loadInitialData() {
       try {
-        const [hRes, expRes, dbRes] = await Promise.all([
+        const [hRes, expRes, dbRes, runsRes] = await Promise.all([
           fetch('/api/health').then(r => r.json()).catch(() => null),
           fetch('/api/experiments').then(r => r.json()).catch(() => null),
-          fetch('/api/databases').then(r => r.json()).catch(() => [])
+          fetch('/api/databases').then(r => r.json()).catch(() => []),
+          fetch('/api/runs').then(r => r.json()).catch(() => null)
         ]);
         setHealth(hRes);
         setExperiments(expRes);
         setDatabases(dbRes || []);
+        setRuns(runsRes?.runs || []);
+        setMain({ keys: runsRes?.main_runs || [], mechanism: runsRes?.mechanism || {} });
       } catch (err) {
         console.error('Lỗi khi nạp dữ liệu ban đầu:', err);
       } finally {
@@ -67,6 +75,7 @@ export default function App() {
         collapsed={collapsed} 
         setCollapsed={setCollapsed}
         health={health}
+        runs={runs}
       />
 
       {/* Main Content Area */}
@@ -74,13 +83,23 @@ export default function App() {
         <Header 
           activeTab={activeTab} 
           setActiveTab={setActiveTab} 
-          health={health} 
+          health={health}
+          runs={runs}
         />
 
         <div className="content-body">
           {activeTab === 'dashboard' && (
-            <Dashboard data={experiments} loading={loading} />
+            <Dashboard data={experiments} loading={loading} runs={runs} main={main} />
           )}
+
+          {activeTab === 'journey' && (
+            <Journey onReplay={(key) => { setPipelinePrefill({ replay_run: key }); setActiveTab('pipeline'); }} />
+          )}
+
+          {/* Stays mounted so a running pipeline survives switching tabs during a presentation. */}
+          <div style={{ display: activeTab === 'pipeline' ? 'block' : 'none' }}>
+            <PipelineDemo prefill={pipelinePrefill} />
+          </div>
 
           {activeTab === 'playground' && (
             <Playground 
@@ -94,6 +113,8 @@ export default function App() {
 
           {activeTab === 'explorer' && (
             <Explorer 
+              runs={runs}
+              main={main}
               databases={databases} 
               onTryQuestion={handleTryQuestion}
             />

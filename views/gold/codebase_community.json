@@ -1,0 +1,414 @@
+{
+  "db_id": "codebase_community",
+  "mode": "gold",
+  "db_untouched": true,
+  "views": [
+    {
+      "name": "v_post_user",
+      "columns": [
+        "post_id",
+        "post_type_id",
+        "post_score",
+        "view_count",
+        "post_title",
+        "post_tags",
+        "answer_count",
+        "comment_count",
+        "favorite_count",
+        "user_id",
+        "author_name",
+        "author_reputation",
+        "author_location",
+        "author_views",
+        "author_upvotes",
+        "author_downvotes",
+        "CreaionDate",
+        "Body",
+        "OwnerUserId",
+        "LastEditorUserId",
+        "ClosedDate",
+        "CreationDate",
+        "LastAccessDate",
+        "Age"
+      ],
+      "source_tables": [
+        "posts",
+        "users"
+      ],
+      "create_sql": "CREATE VIEW v_post_user AS SELECT posts.Id AS post_id, posts.PostTypeId AS post_type_id, posts.Score AS post_score, posts.ViewCount AS view_count, posts.Title AS post_title, posts.Tags AS post_tags, posts.AnswerCount AS answer_count, posts.CommentCount AS comment_count, posts.FavoriteCount AS favorite_count, users.Id AS user_id, users.DisplayName AS author_name, users.Reputation AS author_reputation, users.Location AS author_location, users.Views AS author_views, users.UpVotes AS author_upvotes, users.DownVotes AS author_downvotes, posts.CreaionDate, posts.Body, posts.OwnerUserId, posts.LastEditorUserId, posts.ClosedDate, users.CreationDate, users.LastAccessDate, users.Age FROM posts LEFT JOIN users ON posts.OwnerUserId = users.Id",
+      "valid": true,
+      "row_count": 91966,
+      "error": null
+    },
+    {
+      "name": "v_comment_details",
+      "columns": [
+        "comment_id",
+        "comment_score",
+        "comment_text",
+        "comment_date",
+        "post_id",
+        "post_title",
+        "user_id",
+        "commenter_name",
+        "commenter_reputation",
+        "PostId",
+        "UserId",
+        "CreaionDate",
+        "Score",
+        "ViewCount",
+        "Body",
+        "OwnerUserId",
+        "Tags",
+        "AnswerCount",
+        "CommentCount",
+        "FavoriteCount",
+        "LastEditorUserId",
+        "ClosedDate",
+        "CreationDate",
+        "LastAccessDate",
+        "Location",
+        "UpVotes",
+        "Age"
+      ],
+      "source_tables": [
+        "comments",
+        "posts",
+        "users"
+      ],
+      "create_sql": "CREATE VIEW v_comment_details AS SELECT comments.Id AS comment_id, comments.Score AS comment_score, comments.Text AS comment_text, comments.CreationDate AS comment_date, posts.Id AS post_id, posts.Title AS post_title, users.Id AS user_id, users.DisplayName AS commenter_name, users.Reputation AS commenter_reputation, comments.PostId, comments.UserId, posts.CreaionDate, posts.Score, posts.ViewCount, posts.Body, posts.OwnerUserId, posts.Tags, posts.AnswerCount, posts.CommentCount, posts.FavoriteCount, posts.LastEditorUserId, posts.ClosedDate, users.CreationDate, users.LastAccessDate, users.Location, users.UpVotes, users.Age FROM comments LEFT JOIN posts ON comments.PostId = posts.Id LEFT JOIN users ON comments.UserId = users.Id",
+      "valid": true,
+      "row_count": 174285,
+      "error": null
+    },
+    {
+      "name": "v_badges",
+      "columns": [
+        "Id",
+        "UserId",
+        "Name",
+        "Date"
+      ],
+      "source_tables": [
+        "badges"
+      ],
+      "create_sql": "CREATE VIEW v_badges AS SELECT badges.Id, badges.UserId, badges.Name, badges.Date FROM badges",
+      "valid": true,
+      "row_count": 79851,
+      "error": null
+    },
+    {
+      "name": "v_badges_users",
+      "columns": [
+        "Id",
+        "UserId",
+        "Name",
+        "Date",
+        "users_Id",
+        "Reputation",
+        "CreationDate",
+        "DisplayName",
+        "LastAccessDate",
+        "Location",
+        "UpVotes",
+        "Age"
+      ],
+      "source_tables": [
+        "badges",
+        "users"
+      ],
+      "create_sql": "CREATE VIEW v_badges_users AS SELECT badges.Id, badges.UserId, badges.Name, badges.Date, users.Id AS users_Id, users.Reputation, users.CreationDate, users.DisplayName, users.LastAccessDate, users.Location, users.UpVotes, users.Age FROM badges INNER JOIN users ON badges.userid = users.id",
+      "valid": true,
+      "row_count": 79851,
+      "error": null
+    },
+    {
+      "name": "v_posthistory_posts",
+      "columns": [
+        "PostHistoryTypeId",
+        "PostId",
+        "UserId",
+        "Text",
+        "Comment",
+        "Id",
+        "CreaionDate",
+        "Score",
+        "ViewCount",
+        "Body",
+        "OwnerUserId",
+        "Title",
+        "Tags",
+        "AnswerCount",
+        "CommentCount",
+        "FavoriteCount",
+        "LastEditorUserId",
+        "ClosedDate"
+      ],
+      "source_tables": [
+        "posthistory",
+        "posts"
+      ],
+      "create_sql": "CREATE VIEW v_posthistory_posts AS SELECT postHistory.PostHistoryTypeId, postHistory.PostId, postHistory.UserId, postHistory.Text, postHistory.Comment, posts.Id, posts.CreaionDate, posts.Score, posts.ViewCount, posts.Body, posts.OwnerUserId, posts.Title, posts.Tags, posts.AnswerCount, posts.CommentCount, posts.FavoriteCount, posts.LastEditorUserId, posts.ClosedDate FROM postHistory INNER JOIN posts ON postHistory.postid = posts.id",
+      "valid": true,
+      "row_count": 303114,
+      "error": null
+    },
+    {
+      "name": "v_posthistory_posts_users",
+      "columns": [
+        "PostHistoryTypeId",
+        "PostId",
+        "UserId",
+        "Text",
+        "Comment",
+        "Id",
+        "Reputation",
+        "CreationDate",
+        "DisplayName",
+        "LastAccessDate",
+        "Location",
+        "UpVotes",
+        "Age",
+        "posts_Id",
+        "CreaionDate",
+        "Score",
+        "ViewCount",
+        "Body",
+        "OwnerUserId",
+        "Title",
+        "Tags",
+        "AnswerCount",
+        "CommentCount",
+        "FavoriteCount",
+        "LastEditorUserId",
+        "ClosedDate"
+      ],
+      "source_tables": [
+        "posthistory",
+        "posts",
+        "users"
+      ],
+      "create_sql": "CREATE VIEW v_posthistory_posts_users AS SELECT postHistory.PostHistoryTypeId, postHistory.PostId, postHistory.UserId, postHistory.Text, postHistory.Comment, users.Id, users.Reputation, users.CreationDate, users.DisplayName, users.LastAccessDate, users.Location, users.UpVotes, users.Age, posts.Id AS posts_Id, posts.CreaionDate, posts.Score, posts.ViewCount, posts.Body, posts.OwnerUserId, posts.Title, posts.Tags, posts.AnswerCount, posts.CommentCount, posts.FavoriteCount, posts.LastEditorUserId, posts.ClosedDate FROM postHistory INNER JOIN users ON postHistory.userid = users.id INNER JOIN posts ON postHistory.postid = posts.id",
+      "valid": true,
+      "row_count": 281793,
+      "error": null
+    },
+    {
+      "name": "v_posthistory_tags_users",
+      "columns": [
+        "PostHistoryTypeId",
+        "PostId",
+        "UserId",
+        "Text",
+        "Comment",
+        "Id",
+        "Reputation",
+        "CreationDate",
+        "DisplayName",
+        "LastAccessDate",
+        "Location",
+        "UpVotes",
+        "Age",
+        "TagName",
+        "ExcerptPostId",
+        "WikiPostId"
+      ],
+      "source_tables": [
+        "posthistory",
+        "tags",
+        "users"
+      ],
+      "create_sql": "CREATE VIEW v_posthistory_tags_users AS SELECT postHistory.PostHistoryTypeId, postHistory.PostId, postHistory.UserId, postHistory.Text, postHistory.Comment, users.Id, users.Reputation, users.CreationDate, users.DisplayName, users.LastAccessDate, users.Location, users.UpVotes, users.Age, tags.TagName, tags.ExcerptPostId, tags.WikiPostId FROM postHistory INNER JOIN users ON postHistory.userid = users.id INNER JOIN tags ON postHistory.postid = tags.excerptpostid",
+      "valid": true,
+      "row_count": 1348,
+      "error": null
+    },
+    {
+      "name": "v_postlinks_posts",
+      "columns": [
+        "Id",
+        "CreationDate",
+        "PostId",
+        "posts_Id",
+        "CreaionDate",
+        "Score",
+        "ViewCount",
+        "Body",
+        "OwnerUserId",
+        "Title",
+        "Tags",
+        "AnswerCount",
+        "CommentCount",
+        "FavoriteCount",
+        "LastEditorUserId",
+        "ClosedDate"
+      ],
+      "source_tables": [
+        "postlinks",
+        "posts"
+      ],
+      "create_sql": "CREATE VIEW v_postlinks_posts AS SELECT postLinks.Id, postLinks.CreationDate, postLinks.PostId, posts.Id AS posts_Id, posts.CreaionDate, posts.Score, posts.ViewCount, posts.Body, posts.OwnerUserId, posts.Title, posts.Tags, posts.AnswerCount, posts.CommentCount, posts.FavoriteCount, posts.LastEditorUserId, posts.ClosedDate FROM postLinks INNER JOIN posts ON postLinks.postid = posts.id",
+      "valid": true,
+      "row_count": 11101,
+      "error": null
+    },
+    {
+      "name": "v_posts_tags",
+      "columns": [
+        "Id",
+        "CreaionDate",
+        "Score",
+        "ViewCount",
+        "Body",
+        "OwnerUserId",
+        "Title",
+        "Tags",
+        "AnswerCount",
+        "CommentCount",
+        "FavoriteCount",
+        "LastEditorUserId",
+        "ClosedDate",
+        "TagName",
+        "ExcerptPostId",
+        "WikiPostId"
+      ],
+      "source_tables": [
+        "posts",
+        "tags"
+      ],
+      "create_sql": "CREATE VIEW v_posts_tags AS SELECT posts.Id, posts.CreaionDate, posts.Score, posts.ViewCount, posts.Body, posts.OwnerUserId, posts.Title, posts.Tags, posts.AnswerCount, posts.CommentCount, posts.FavoriteCount, posts.LastEditorUserId, posts.ClosedDate, tags.TagName, tags.ExcerptPostId, tags.WikiPostId FROM posts INNER JOIN tags ON posts.id = tags.excerptpostid",
+      "valid": true,
+      "row_count": 595,
+      "error": null
+    },
+    {
+      "name": "v_posts_users_votes",
+      "columns": [
+        "Id",
+        "CreaionDate",
+        "Score",
+        "ViewCount",
+        "Body",
+        "OwnerUserId",
+        "Title",
+        "Tags",
+        "AnswerCount",
+        "CommentCount",
+        "FavoriteCount",
+        "LastEditorUserId",
+        "ClosedDate",
+        "votes_Id",
+        "PostId",
+        "CreationDate",
+        "UserId",
+        "BountyAmount",
+        "users_Id",
+        "Reputation",
+        "users_CreationDate",
+        "DisplayName",
+        "LastAccessDate",
+        "Location",
+        "UpVotes",
+        "Age"
+      ],
+      "source_tables": [
+        "posts",
+        "users",
+        "votes"
+      ],
+      "create_sql": "CREATE VIEW v_posts_users_votes AS SELECT posts.Id, posts.CreaionDate, posts.Score, posts.ViewCount, posts.Body, posts.OwnerUserId, posts.Title, posts.Tags, posts.AnswerCount, posts.CommentCount, posts.FavoriteCount, posts.LastEditorUserId, posts.ClosedDate, votes.Id AS votes_Id, votes.PostId, votes.CreationDate, votes.UserId, votes.BountyAmount, users.Id AS users_Id, users.Reputation, users.CreationDate AS users_CreationDate, users.DisplayName, users.LastAccessDate, users.Location, users.UpVotes, users.Age FROM posts INNER JOIN votes ON posts.id = votes.postid INNER JOIN users ON votes.userid = users.id",
+      "valid": true,
+      "row_count": 3425,
+      "error": null
+    },
+    {
+      "name": "v_posts_votes",
+      "columns": [
+        "Id",
+        "CreaionDate",
+        "Score",
+        "ViewCount",
+        "Body",
+        "OwnerUserId",
+        "Title",
+        "Tags",
+        "AnswerCount",
+        "CommentCount",
+        "FavoriteCount",
+        "LastEditorUserId",
+        "ClosedDate",
+        "votes_Id",
+        "PostId",
+        "CreationDate",
+        "UserId",
+        "BountyAmount"
+      ],
+      "source_tables": [
+        "posts",
+        "votes"
+      ],
+      "create_sql": "CREATE VIEW v_posts_votes AS SELECT posts.Id, posts.CreaionDate, posts.Score, posts.ViewCount, posts.Body, posts.OwnerUserId, posts.Title, posts.Tags, posts.AnswerCount, posts.CommentCount, posts.FavoriteCount, posts.LastEditorUserId, posts.ClosedDate, votes.Id AS votes_Id, votes.PostId, votes.CreationDate, votes.UserId, votes.BountyAmount FROM posts INNER JOIN votes ON posts.owneruserid = votes.userid",
+      "valid": true,
+      "row_count": 292534,
+      "error": null
+    },
+    {
+      "name": "v_tags",
+      "columns": [
+        "TagName",
+        "ExcerptPostId",
+        "WikiPostId"
+      ],
+      "source_tables": [
+        "tags"
+      ],
+      "create_sql": "CREATE VIEW v_tags AS SELECT tags.TagName, tags.ExcerptPostId, tags.WikiPostId FROM tags",
+      "valid": true,
+      "row_count": 1032,
+      "error": null
+    },
+    {
+      "name": "v_users_votes",
+      "columns": [
+        "Id",
+        "Reputation",
+        "CreationDate",
+        "DisplayName",
+        "LastAccessDate",
+        "Location",
+        "UpVotes",
+        "Age",
+        "votes_Id",
+        "PostId",
+        "votes_CreationDate",
+        "UserId",
+        "BountyAmount"
+      ],
+      "source_tables": [
+        "users",
+        "votes"
+      ],
+      "create_sql": "CREATE VIEW v_users_votes AS SELECT users.Id, users.Reputation, users.CreationDate, users.DisplayName, users.LastAccessDate, users.Location, users.UpVotes, users.Age, votes.Id AS votes_Id, votes.PostId, votes.CreationDate AS votes_CreationDate, votes.UserId, votes.BountyAmount FROM users INNER JOIN votes ON users.id = votes.userid",
+      "valid": true,
+      "row_count": 3425,
+      "error": null
+    },
+    {
+      "name": "v_votes",
+      "columns": [
+        "Id",
+        "PostId",
+        "CreationDate",
+        "UserId",
+        "BountyAmount"
+      ],
+      "source_tables": [
+        "votes"
+      ],
+      "create_sql": "CREATE VIEW v_votes AS SELECT votes.Id, votes.PostId, votes.CreationDate, votes.UserId, votes.BountyAmount FROM votes",
+      "valid": true,
+      "row_count": 38930,
+      "error": null
+    }
+  ]
+}

@@ -152,21 +152,21 @@ export default function Architecture() {
               <span>Kiến trúc Framework V-SQL (View-based Two-stage Text-to-SQL)</span>
             </h2>
             <p style={{ margin: 0, fontSize: '0.875rem', color: '#475569', lineHeight: '1.6', maxWidth: '900px' }}>
-              Framework <b>V-SQL</b> giải quyết điểm yếu cốt lõi của các mô hình LLM khi sinh SQL: <b>Foreign-Key Hallucination</b> (nhầm lẫn giữa các khóa ngoại và liên kết sai bảng khi câu hỏi yêu cầu nhiều mệnh đề JOIN phức tạp). Phương pháp chia quá trình suy luận làm <b>2 Pha độc lập</b>: làm phẳng lược đồ trước khi sinh SQL (Stage 1), sau đó phục hồi về bảng vật lý (Stage 2).
+              Theo bài báo, <b>V-SQL</b> nhắm vào điểm yếu của LLM khi sinh SQL: <b>Foreign-Key Hallucination</b> (nhầm khóa ngoại và nối sai bảng khi câu hỏi cần nhiều JOIN). Phương pháp chia quá trình suy luận làm <b>2 Pha độc lập</b>: làm phẳng lược đồ trước khi sinh SQL (Stage 1), sau đó phục hồi về bảng vật lý (Stage 2).
             </p>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-end' }}>
             <div style={{ display: 'flex', gap: '6px' }}>
               <span className="badge badge-success" style={{ fontSize: '0.8rem', padding: '5px 10px' }}>
-                Giảm 56.2% JOINs (Stage 1)
+                Giảm 65% đến 92% JOIN ở Stage 1
               </span>
               <span className="badge badge-primary" style={{ fontSize: '0.8rem', padding: '5px 10px' }}>
                 Chia để trị (Divide & Conquer)
               </span>
             </div>
             <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-              Thực nghiệm trên 500 câu BIRD mini-dev
+              Cấu hình chính, 4 model, 500 câu BIRD mini-dev
             </span>
           </div>
         </div>
@@ -611,9 +611,9 @@ export default function Architecture() {
               
               <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '0.8rem', color: '#475569', lineHeight: '1.5', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <li><b>Cơ chế:</b> Nạp toàn bộ schema SQLite gốc (bảng thật, khóa chính, khóa ngoại) vào 1 prompt duy nhất.</li>
-                <li><b>Ưu điểm:</b> Tốc độ nhanh (độ trễ ~27.5s trên local GPU), tiết kiệm số lượt gọi API LLM (chỉ 1 lần sinh).</li>
-                <li><b>Nhược điểm cốt tử:</b> LLM phải đồng thời hiểu ngữ nghĩa câu hỏi và nhớ chính xác mọi khóa ngoại ➔ <b>Dễ bị Foreign-Key Hallucination</b> khi có từ 2-3 bảng JOIN trở lên.</li>
-                <li><b>Độ chính xác trên BIRD:</b> EX đạt <b>47.4%</b> trên Qwen2.5-Coder-7B (giảm mạnh ở mức Challenging: 27.5%).</li>
+                <li><b>Ưu điểm:</b> Chỉ gọi LLM 1 lần, mất 1.3 đến 6.8 giây mỗi câu tùy model.</li>
+                <li><b>Nhược điểm theo bài báo:</b> LLM phải vừa hiểu câu hỏi vừa nhớ đúng khóa ngoại, nên dễ nhầm khi cần JOIN nhiều bảng.</li>
+                <li><b>Độ chính xác trên BIRD:</b> EX từ <b>47.4%</b> (Qwen3 4B) đến <b>61.4%</b> (GPT-6 Luna).</li>
               </ul>
             </div>
 
@@ -630,10 +630,10 @@ export default function Architecture() {
               </h3>
               
               <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '0.8rem', color: '#475569', lineHeight: '1.5', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <li><b>Cơ chế:</b> Tách làm 2 chặng: Stage 1 làm việc trên View phẳng (0 JOIN) ➔ Stage 2 chỉ unroll các View xuất hiện trong câu lệnh.</li>
-                <li><b>Ưu điểm lớn nhất:</b> <b>Triệt tiêu nhầm lẫn khóa ngoại</b>. Các câu hỏi khó với nhiều JOIN (như Q724) được giải quyết chuẩn xác nhờ unroll từng View một cách có cấu trúc.</li>
-                <li><b>Hiện tượng View Leak (Phát hiện thực nghiệm):</b> Mô hình nhỏ 7B gặp 21 câu sót tiền tố <code>v_*</code> ở Stage 2 do unroll chưa triệt để (điểm khác biệt quan trọng so với GPT-4 trong bài báo).</li>
-                <li><b>Đánh đổi (Trade-off):</b> Thời gian suy luận gấp đôi (~64.9s) và lượng token xử lý tăng do phải gọi LLM qua 2 chặng.</li>
+                <li><b>Cơ chế:</b> Tách làm 2 chặng: Stage 1 làm việc trên View phẳng, ít JOIN hơn ➔ Stage 2 chỉ unroll các View xuất hiện trong câu lệnh.</li>
+                <li><b>Đo được:</b> Stage 1 giảm <b>65% đến 92%</b> JOIN so với gold SQL. EX đạt <b>38.6%</b> (Qwen2.5-Coder 7B) đến <b>58.6%</b> (GPT-6 Luna), chưa cao hơn Direct trên model nào.</li>
+                <li><b>View Leak:</b> SQL cuối còn sót tên <code>v_*</code> ở 5 câu với 7B và 1 câu với 32B. 4B và Luna không gặp.</li>
+                <li><b>Đánh đổi:</b> Gọi LLM 2 lần, mất 3.1 đến 19.6 giây mỗi câu tùy model, gấp 2 đến 2.9 lần Direct.</li>
               </ul>
             </div>
 
@@ -643,37 +643,37 @@ export default function Architecture() {
           <div className="card" style={{ padding: '1.5rem' }}>
             <h3 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#0f172a', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Cpu size={18} color="#06b6d4" />
-              <span>3 Phát Hiện Thực Nghiệm Đắt Giá Cho Báo Cáo &amp; Đồ Án</span>
+              <span>3 nhận xét từ cấu hình chính</span>
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
               
               <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px' }}>
                 <div style={{ fontWeight: '700', fontSize: '0.85rem', color: '#0f172a', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ color: '#2563eb' }}>1.</span> Khả năng triệt tiêu JOIN
+                  <span style={{ color: '#2563eb' }}>1.</span> Stage 1 giảm JOIN
                 </div>
                 <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b', lineHeight: '1.45' }}>
-                  V-SQL giảm trung bình <b>56.2%</b> số lượng JOINs ở Stage 1 trên toàn bộ 500 câu. Đặc biệt ở <code style={{ color: '#0f172a' }}>california_schools</code> (giảm <b>92.5%</b>) và <code style={{ color: '#0f172a' }}>superhero</code> (giảm <b>62.5%</b>), chứng minh tính hiệu quả của tầng View trong việc làm phẳng cấu trúc quan hệ.
+                  So với gold SQL, Stage 1 giảm <b>92%</b> JOIN với Luna, <b>77%</b> với 32B, <b>73%</b> với 7B và <b>65%</b> với 4B. Stage 2 đưa số JOIN về gần gold SQL. Mức giảm này chưa đi kèm EX cao hơn Direct.
                 </p>
               </div>
 
               <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', padding: '12px' }}>
                 <div style={{ fontWeight: '700', fontSize: '0.85rem', color: '#991b1b', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <AlertTriangle size={15} color="#dc2626" />
-                  <span>2. Vấn đề View Leak ở SLM (7B)</span>
+                  <span>2. Stage 2 có lúc làm sai câu đã đúng</span>
                 </div>
                 <p style={{ margin: 0, fontSize: '0.78rem', color: '#7f1d1d', lineHeight: '1.45' }}>
-                  Paper gốc dùng GPT-4 không ghi nhận View Leak, nhưng với mô hình local <b>7B</b>, có <b>21/500 câu</b> bị rò rỉ <code>v_*</code> ở Stage 2. Đây là minh chứng rõ rệt cho thấy mô hình nhỏ cần bổ sung quy tắc cấm <code>v_*</code> rõ ràng hơn trong prompt Stage 2.
+                  Số câu Stage 1 đúng nhưng SQL cuối sai là <b>44</b> với 7B, <b>19</b> với 4B, <b>7</b> với 32B và <b>4</b> với Luna. Ngoài ra, SQL cuối còn sót <code>v_*</code> ở 5 câu với 7B và 1 câu với 32B.
                 </p>
               </div>
 
               <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '12px' }}>
                 <div style={{ fontWeight: '700', fontSize: '0.85rem', color: '#166534', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <CheckCircle2 size={15} color="#16a34a" />
-                  <span>3. Khuyến nghị Ứng dụng Thực tế</span>
+                  <span>3. Chưa có cơ sở chọn theo độ khó</span>
                 </div>
                 <p style={{ margin: 0, fontSize: '0.78rem', color: '#15803d', lineHeight: '1.45' }}>
-                  Nên sử dụng <b>Cơ chế Định tuyến Thông minh (Hybrid Routing)</b>: với câu hỏi Simple (0-1 JOIN), dùng Direct Baseline để đạt tốc độ cao; với câu hỏi Challenging (từ 2 JOIN trở lên), kích hoạt V-SQL 2-Stage để đảm bảo độ chính xác tuyệt đối.
+                  Ở câu Challenging, V-SQL và Direct không khác biệt rõ trên cả 4 model (p từ 0.42 trở lên). Kết quả này chưa ủng hộ việc tự chuyển sang V-SQL khi câu hỏi khó.
                 </p>
               </div>
 

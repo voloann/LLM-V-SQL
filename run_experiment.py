@@ -21,7 +21,7 @@ if hasattr(sys.stdout, 'reconfigure'):
     except Exception:
         pass
 
-def load_db_configs(db_root=config.DB_ROOT, views_dir="views", view_mode="manual"):
+def load_db_configs(db_root=config.DB_ROOT, views_dir="views", view_mode="manual", schema_mode="names"):
     """
     Nạp sẵn thông tin schema và view của các DB để tối ưu tốc độ suy luận.
     """
@@ -64,7 +64,13 @@ def load_db_configs(db_root=config.DB_ROOT, views_dir="views", view_mode="manual
             "view_schema": view_schema_header,
             "view_mapping_rules": view_mapping_rules
         }
-        
+
+        if schema_mode == "described":
+            from schema_describe import format_tables_described, format_view_schema_described, load_column_docs
+            docs = load_column_docs(db_root, d)
+            db_configs[d]["view_schema"] = format_view_schema_described(parsed_views, docs)
+            db_configs[d]["direct_schema"] = format_tables_described(table_schemas, docs)
+
     return db_configs
 
 def run_experiment(
@@ -75,7 +81,8 @@ def run_experiment(
     data_path=config.DATA_PATH,
     output_dir=None,
     resume=True,
-    run_eval=True
+    run_eval=True,
+    schema_mode="names"
 ):
     timestamp = datetime.now().strftime("%Y%m%d-%H%M")
     scope_str = target_db if target_db != "all" else "full"
@@ -121,7 +128,7 @@ def run_experiment(
 
     # 3. Nạp cấu hình DB
     print("[*] Đang nạp cấu hình và schema các CSDL...")
-    db_configs = load_db_configs(view_mode=view_mode)
+    db_configs = load_db_configs(view_mode=view_mode, schema_mode=schema_mode)
 
     # 4. Vòng lặp suy luận
     trace_file = open(trace_path, "a", encoding="utf-8")
@@ -238,13 +245,14 @@ def run_experiment(
 def main():
     parser = argparse.ArgumentParser(description="Chạy thực nghiệm V-SQL hoặc Baseline Direct")
     parser.add_argument("--method", choices=["vsql", "direct"], default="vsql", help="Phương pháp suy luận")
-    parser.add_argument("--view-mode", choices=["manual", "auto"], default="manual", help="Chế độ view: manual hoặc auto")
+    parser.add_argument("--view-mode", choices=["manual", "auto", "fk", "gold", "paper"], default="manual", help="Chế độ view: manual, auto, fk (mở rộng theo khóa ngoại), gold (mọi join trong gold SQL) hoặc paper (gold chọn lọc theo bài báo)")
     parser.add_argument("--db", type=str, default="all", help="Tên database cụ thể hoặc 'all'")
     parser.add_argument("--limit", type=int, default=None, help="Giới hạn số câu hỏi")
     parser.add_argument("--data", type=str, default=config.DATA_PATH, help="Đường dẫn file dataset")
     parser.add_argument("--output-dir", type=str, default=None, help="Thư mục xuất kết quả")
     parser.add_argument("--no-resume", action="store_true", help="Không đọc lại file trace cũ")
     parser.add_argument("--no-eval", action="store_true", help="Không chạy đánh giá sau khi suy luận")
+    parser.add_argument("--schema-mode", choices=["names", "described"], default="names", help="Schema cho Stage 1 và Direct: chỉ tên cột hoặc thêm kiểu dữ liệu và mô tả cột")
     args = parser.parse_args()
 
     run_experiment(
@@ -255,7 +263,8 @@ def main():
         data_path=args.data,
         output_dir=args.output_dir,
         resume=(not args.no_resume),
-        run_eval=(not args.no_eval)
+        run_eval=(not args.no_eval),
+        schema_mode=args.schema_mode
     )
 
 if __name__ == "__main__":

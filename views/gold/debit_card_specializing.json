@@ -1,0 +1,188 @@
+{
+  "db_id": "debit_card_specializing",
+  "mode": "gold",
+  "db_untouched": true,
+  "views": [
+    {
+      "name": "v_customer_consumption",
+      "columns": [
+        "customer_id",
+        "customer_segment",
+        "currency",
+        "year_month",
+        "consumption",
+        "CustomerID"
+      ],
+      "source_tables": [
+        "customers",
+        "yearmonth"
+      ],
+      "create_sql": "CREATE VIEW v_customer_consumption AS SELECT customers.CustomerID AS customer_id, customers.Segment AS customer_segment, customers.Currency AS currency, yearmonth.Date AS year_month, yearmonth.Consumption AS consumption, yearmonth.CustomerID FROM customers LEFT JOIN yearmonth ON customers.CustomerID = yearmonth.CustomerID",
+      "valid": true,
+      "row_count": 385177,
+      "error": null
+    },
+    {
+      "name": "v_transaction_details",
+      "columns": [
+        "transaction_id",
+        "transaction_date",
+        "transaction_time",
+        "customer_id",
+        "card_id",
+        "gas_station_id",
+        "product_id",
+        "amount",
+        "price",
+        "station_country",
+        "station_segment",
+        "station_chain_id",
+        "product_description",
+        "GasStationID",
+        "ProductID"
+      ],
+      "source_tables": [
+        "gasstations",
+        "products",
+        "transactions_1k"
+      ],
+      "create_sql": "CREATE VIEW v_transaction_details AS SELECT transactions_1k.TransactionID AS transaction_id, transactions_1k.Date AS transaction_date, transactions_1k.Time AS transaction_time, transactions_1k.CustomerID AS customer_id, transactions_1k.CardID AS card_id, transactions_1k.GasStationID AS gas_station_id, transactions_1k.ProductID AS product_id, transactions_1k.Amount AS amount, transactions_1k.Price AS price, gasstations.Country AS station_country, gasstations.Segment AS station_segment, gasstations.ChainID AS station_chain_id, products.Description AS product_description, gasstations.GasStationID, products.ProductID FROM transactions_1k LEFT JOIN gasstations ON transactions_1k.GasStationID = gasstations.GasStationID LEFT JOIN products ON transactions_1k.ProductID = products.ProductID",
+      "valid": true,
+      "row_count": 1000,
+      "error": null
+    },
+    {
+      "name": "v_customers_gasstations_transactions_1k",
+      "columns": [
+        "CustomerID",
+        "Segment",
+        "Currency",
+        "TransactionID",
+        "Date",
+        "Time",
+        "transactions_1k_CustomerID",
+        "GasStationID",
+        "ProductID",
+        "Amount",
+        "Price",
+        "gasstations_GasStationID",
+        "ChainID",
+        "Country",
+        "gasstations_Segment"
+      ],
+      "source_tables": [
+        "customers",
+        "gasstations",
+        "transactions_1k"
+      ],
+      "create_sql": "CREATE VIEW v_customers_gasstations_transactions_1k AS SELECT customers.CustomerID, customers.Segment, customers.Currency, transactions_1k.TransactionID, transactions_1k.Date, transactions_1k.Time, transactions_1k.CustomerID AS transactions_1k_CustomerID, transactions_1k.GasStationID, transactions_1k.ProductID, transactions_1k.Amount, transactions_1k.Price, gasstations.GasStationID AS gasstations_GasStationID, gasstations.ChainID, gasstations.Country, gasstations.Segment AS gasstations_Segment FROM customers INNER JOIN transactions_1k ON customers.customerid = transactions_1k.customerid INNER JOIN gasstations ON transactions_1k.gasstationid = gasstations.gasstationid",
+      "valid": true,
+      "row_count": 1000,
+      "error": null
+    },
+    {
+      "name": "v_customers_transactions_1k",
+      "columns": [
+        "CustomerID",
+        "Segment",
+        "Currency",
+        "TransactionID",
+        "Date",
+        "Time",
+        "transactions_1k_CustomerID",
+        "GasStationID",
+        "ProductID",
+        "Amount",
+        "Price"
+      ],
+      "source_tables": [
+        "customers",
+        "transactions_1k"
+      ],
+      "create_sql": "CREATE VIEW v_customers_transactions_1k AS SELECT customers.CustomerID, customers.Segment, customers.Currency, transactions_1k.TransactionID, transactions_1k.Date, transactions_1k.Time, transactions_1k.CustomerID AS transactions_1k_CustomerID, transactions_1k.GasStationID, transactions_1k.ProductID, transactions_1k.Amount, transactions_1k.Price FROM customers INNER JOIN transactions_1k ON customers.customerid = transactions_1k.customerid",
+      "valid": true,
+      "row_count": 1000,
+      "error": null
+    },
+    {
+      "name": "v_gasstations_transactions_1k_yearmonth",
+      "columns": [
+        "GasStationID",
+        "ChainID",
+        "Country",
+        "Segment",
+        "TransactionID",
+        "Date",
+        "Time",
+        "CustomerID",
+        "transactions_1k_GasStationID",
+        "ProductID",
+        "Amount",
+        "Price",
+        "yearmonth_CustomerID",
+        "yearmonth_Date",
+        "Consumption"
+      ],
+      "source_tables": [
+        "gasstations",
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "create_sql": "CREATE VIEW v_gasstations_transactions_1k_yearmonth AS SELECT gasstations.GasStationID, gasstations.ChainID, gasstations.Country, gasstations.Segment, transactions_1k.TransactionID, transactions_1k.Date, transactions_1k.Time, transactions_1k.CustomerID, transactions_1k.GasStationID AS transactions_1k_GasStationID, transactions_1k.ProductID, transactions_1k.Amount, transactions_1k.Price, yearmonth.CustomerID AS yearmonth_CustomerID, yearmonth.Date AS yearmonth_Date, yearmonth.Consumption FROM gasstations INNER JOIN transactions_1k ON gasstations.gasstationid = transactions_1k.gasstationid INNER JOIN yearmonth ON transactions_1k.customerid = yearmonth.customerid",
+      "valid": true,
+      "row_count": 17655,
+      "error": null
+    },
+    {
+      "name": "v_products_transactions_1k_yearmonth",
+      "columns": [
+        "ProductID",
+        "Description",
+        "TransactionID",
+        "Date",
+        "Time",
+        "CustomerID",
+        "GasStationID",
+        "transactions_1k_ProductID",
+        "Amount",
+        "Price",
+        "yearmonth_CustomerID",
+        "yearmonth_Date",
+        "Consumption"
+      ],
+      "source_tables": [
+        "products",
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "create_sql": "CREATE VIEW v_products_transactions_1k_yearmonth AS SELECT products.ProductID, products.Description, transactions_1k.TransactionID, transactions_1k.Date, transactions_1k.Time, transactions_1k.CustomerID, transactions_1k.GasStationID, transactions_1k.ProductID AS transactions_1k_ProductID, transactions_1k.Amount, transactions_1k.Price, yearmonth.CustomerID AS yearmonth_CustomerID, yearmonth.Date AS yearmonth_Date, yearmonth.Consumption FROM products INNER JOIN transactions_1k ON products.productid = transactions_1k.productid INNER JOIN yearmonth ON transactions_1k.customerid = yearmonth.customerid",
+      "valid": true,
+      "row_count": 17655,
+      "error": null
+    },
+    {
+      "name": "v_transactions_1k_yearmonth",
+      "columns": [
+        "TransactionID",
+        "Date",
+        "Time",
+        "CustomerID",
+        "GasStationID",
+        "ProductID",
+        "Amount",
+        "Price",
+        "yearmonth_CustomerID",
+        "yearmonth_Date",
+        "Consumption"
+      ],
+      "source_tables": [
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "create_sql": "CREATE VIEW v_transactions_1k_yearmonth AS SELECT transactions_1k.TransactionID, transactions_1k.Date, transactions_1k.Time, transactions_1k.CustomerID, transactions_1k.GasStationID, transactions_1k.ProductID, transactions_1k.Amount, transactions_1k.Price, yearmonth.CustomerID AS yearmonth_CustomerID, yearmonth.Date AS yearmonth_Date, yearmonth.Consumption FROM transactions_1k INNER JOIN yearmonth ON transactions_1k.customerid = yearmonth.customerid",
+      "valid": true,
+      "row_count": 17655,
+      "error": null
+    }
+  ]
+}

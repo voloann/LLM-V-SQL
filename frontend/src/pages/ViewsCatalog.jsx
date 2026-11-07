@@ -97,24 +97,14 @@ export default function ViewsCatalog({ databases, onTryQuestion, onNavigateTab }
             Pha 1 · Table Mapping
           </span>
           <span style={{ fontSize: '0.8rem', color: '#475569' }}>
-            Nhóm các bảng có quan hệ khóa ngoại thành View phẳng <code style={{ color: '#4f46e5', fontWeight: '600' }}>v_*</code>, triệt tiêu <b>56.2% JOINs</b> mà không sửa SQLite gốc.
+            Nhóm các bảng có quan hệ khóa ngoại thành View phẳng <code style={{ color: '#4f46e5', fontWeight: '600' }}>v_*</code> mà không sửa SQLite gốc. Đây là bộ 43 view của cấu hình chính.
           </span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '0.78rem' }}>
           <span style={{ color: '#64748b' }}>CSDL: <b style={{ color: '#0f172a' }}>11</b></span>
-          <span style={{ color: '#64748b' }}>Views: <b style={{ color: '#4338ca' }}>27</b></span>
+          <span style={{ color: '#64748b' }}>Views: <b style={{ color: '#4338ca' }}>{(databases || []).reduce((sum, db) => sum + (db.view_count ?? 0), 0)}</b></span>
           <span style={{ color: '#64748b' }}>Bảng gốc: <b style={{ color: '#0f172a' }}>75</b></span>
-          <span style={{ 
-            fontSize: '0.74rem',
-            color: '#15803d', 
-            fontWeight: '700', 
-            background: '#dcfce7', 
-            padding: '2px 8px', 
-            borderRadius: '5px' 
-          }}>
-            ⚡ -56.2% JOINs
-          </span>
         </div>
       </div>
 
@@ -159,7 +149,7 @@ export default function ViewsCatalog({ databases, onTryQuestion, onNavigateTab }
               const isSelected = db.db_id === selectedDbId;
               const viewCount = db.view_count ?? db.parsed_views?.length ?? 0;
               const tableCount = db.physical_tables?.length ?? 0;
-              const reduction = db.reduction_pct ?? 50.0;
+              const reduction = db.reduction_pct ?? 0;
 
               return (
                 <div
@@ -254,7 +244,7 @@ export default function ViewsCatalog({ databases, onTryQuestion, onNavigateTab }
                   }}>
                     <span style={{ color: '#64748b' }}>Gộp: <b style={{ color: '#0f172a' }}>{currentDb.physical_tables?.length || 0} bảng ➔ {currentDb.parsed_views?.length || 0} views</b></span>
                     <span style={{ color: '#cbd5e1' }}>|</span>
-                    <span style={{ color: '#16a34a', fontWeight: '700' }}>Giảm -{currentDb.reduction_pct ?? 50.0}% JOINs</span>
+                    <span style={{ color: '#16a34a', fontWeight: '700' }}>Stage 1 giảm {currentDb.reduction_pct ?? 0}% JOIN so với gold</span>
                   </div>
 
                   {onNavigateTab && (
@@ -678,7 +668,7 @@ export default function ViewsCatalog({ databases, onTryQuestion, onNavigateTab }
                     padding: '2px 7px', 
                     borderRadius: '5px' 
                   }}>
-                    Giảm -{currentDb.reduction_pct ?? 50.0}% số JOINs
+                    Stage 1 giảm {currentDb.reduction_pct ?? 0}% JOIN so với gold
                   </span>
                 </div>
 
@@ -694,7 +684,7 @@ export default function ViewsCatalog({ databases, onTryQuestion, onNavigateTab }
                   <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '7px', padding: '8px 10px', textAlign: 'center' }}>
                     <div style={{ fontSize: '0.68rem', color: '#64748b' }}>Số phép JOIN trung bình</div>
                     <div style={{ fontSize: '0.86rem', fontWeight: '700', color: '#0f172a', marginTop: '2px' }}>
-                      {currentDb.gold_joins ?? 1.0} ➔ <span style={{ color: '#0284c7' }}>{currentDb.dummy_joins ?? 0.5}</span>
+                      {currentDb.gold_joins ?? 0} ➔ <span style={{ color: '#0284c7' }}>{currentDb.dummy_joins ?? 0}</span>
                     </div>
                   </div>
 

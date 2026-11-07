@@ -52,7 +52,8 @@ function getPaginationItems(current, total) {
   return pages;
 }
 
-export default function Explorer({ databases, onTryQuestion }) {
+export default function Explorer({ databases, onTryQuestion, runs, main }) {
+  const [runKey, setRunKey] = useState('luna_500_paper');
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -77,13 +78,13 @@ export default function Explorer({ databases, onTryQuestion }) {
 
   // Fetch all 500 questions once so user can filter, search, sort, and paginate instantly with zero latency
   useEffect(() => {
-    fetchQuestions();
-  }, []);
+    fetchQuestions(runKey);
+  }, [runKey]);
 
-  const fetchQuestions = async () => {
+  const fetchQuestions = async (key) => {
     setLoading(true);
     try {
-      const resp = await fetch('/api/questions?limit=500');
+      const resp = await fetch(`/api/questions?limit=500&run=${encodeURIComponent(key)}`);
       const data = await resp.json();
       setQuestions(data.questions || []);
     } catch (err) {
@@ -323,6 +324,22 @@ export default function Explorer({ databases, onTryQuestion }) {
             )}
           </div>
 
+          {/* Model of the main configuration */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <label htmlFor="explorer-model" style={{ fontSize: '0.8rem', fontWeight: '600', color: '#475569', whiteSpace: 'nowrap' }}>Model:</label>
+            <select
+              id="explorer-model"
+              value={runKey}
+              onChange={(e) => setRunKey(e.target.value)}
+              style={{ height: '38px', padding: '0 0.75rem', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '0.825rem', color: '#0f172a', cursor: 'pointer', fontWeight: '500' }}
+            >
+              {(main?.keys || []).map((key) => {
+                const run = (runs || []).find((r) => r.key === key);
+                return run ? <option key={key} value={key} disabled={!run.available}>{run.model}{run.available ? '' : ', đang chạy'}</option> : null;
+              })}
+            </select>
+          </div>
+
           {/* Database Selector */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <span style={{ fontSize: '0.8rem', fontWeight: '600', color: '#475569', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -543,7 +560,7 @@ export default function Explorer({ databases, onTryQuestion }) {
             title="Lọc 21 câu hỏi mà Stage 2 bị rò rỉ bảng ảo v_*"
           >
             <AlertTriangle size={12} />
-            <span>21 Câu View Leak</span>
+            <span>{stats.viewLeak} Câu View Leak</span>
           </button>
 
           {/* JOIN Reduction Toggle */}

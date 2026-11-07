@@ -1,16 +1,40 @@
 import os
 import re
 import time
+from dataclasses import dataclass, field
 from openai import OpenAI
 import config
 
-_client = None
+_clients = {}
 
-def get_client() -> OpenAI:
-    global _client
-    if _client is None:
-        _client = OpenAI(base_url=config.LLM_BASE_URL, api_key=config.LLM_API_KEY)
-    return _client
+
+@dataclass
+class LLMProfile:
+    """Connection and parameter names for one model. token_param differs between API generations."""
+    model: str
+    base_url: str
+    api_key: str = field(repr=False)
+    token_param: str = "max_tokens"
+    extra: dict = field(default_factory=dict)
+
+
+def default_profile() -> LLMProfile:
+    extra = {"reasoning_effort": config.LLM_REASONING_EFFORT} if config.LLM_REASONING_EFFORT else {}
+    return LLMProfile(config.SELECTED_MODEL, config.LLM_BASE_URL, config.LLM_API_KEY, config.LLM_TOKEN_PARAM, extra)
+
+
+def get_client(profile: LLMProfile | None = None) -> OpenAI:
+    profile = profile or default_profile()
+    key = (profile.base_url, profile.api_key)
+    if key not in _clients:
+        _clients[key] = OpenAI(base_url=profile.base_url, api_key=profile.api_key)
+    return _clients[key]
+
+
+def _redact(message: str, api_key: str) -> str:
+    message = re.sub(r"sk-[\w*.-]+", "[redacted]", message)
+    return message.replace(api_key, "[redacted]") if api_key else message
+
 
 def clean_sql(text: str) -> str:
     """
@@ -39,14 +63,16 @@ def call_llm(
     temperature: float = config.TEMPERATURE,
     max_tokens: int = config.MAX_TOKENS,
     top_p: float = config.TOP_P,
-    model: str = config.SELECTED_MODEL
+    model: str | None = None,
+    profile: LLMProfile | None = None
 ) -> tuple[str, dict]:
     """
-    Gửi prompt tới LLM qua API tương thích OpenAI (LM Studio).
+    Gửi prompt tới LLM qua API tương thích OpenAI (LM Studio, Ollama, OpenAI).
     Trả về: (cleaned_sql, stats_dict)
     stats_dict bao gồm: prompt_tokens, completion_tokens, latency_s, raw_content, error.
     """
-    client = get_client()
+    profile = profile or default_profile()
+    client = get_client(profile)
     stats = {
         "prompt_tokens": 0,
         "completion_tokens": 0,
@@ -59,11 +85,12 @@ def call_llm(
     start_time = time.perf_counter()
     try:
         response = client.chat.completions.create(
-            model=model,
+            model=model or profile.model,
             messages=[{"role": "user", "content": prompt}],
             temperature=temperature,
-            max_tokens=max_tokens,
             top_p=top_p,
+            **{profile.token_param: max_tokens},
+            **profile.extra,
         )
         latency = time.perf_counter() - start_time
         stats["latency_s"] = round(latency, 3)
@@ -80,7 +107,7 @@ def call_llm(
         
     except Exception as e:
         stats["latency_s"] = round(time.perf_counter() - start_time, 3)
-        stats["error"] = str(e)
+        stats["error"] = _redact(str(e), profile.api_key)
         return "", stats
 
 if __name__ == "__main__":

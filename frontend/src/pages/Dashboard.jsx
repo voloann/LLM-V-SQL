@@ -1,3 +1,5 @@
+import './pipeline.css';
+import MainConfigTable from '../components/MainConfigTable';
 import React, { useState } from 'react';
 import { 
   TrendingUp, 
@@ -27,28 +29,42 @@ const DEFAULT_DATASET_STATS = [
   {"difficulty": "TOTAL", "count": 500, "avg_joins": 1.06, "avg_tables": 2.08, "combos": 158, "paper_joins": 1.08, "paper_tables": 2.55, "paper_combos": 190}
 ];
 
-const DEFAULT_TABLE_D = [
-  {"db_id": "formula_1", "count": 66, "gold_joins": 1.15, "dummy_joins": 0.70, "reduction_pct": 39.1, "view_leaks": 2, "d_tokens": 58.0, "v_tokens": 148.6, "notes": "CSDL nhiều bảng nhất, quan hệ đua xe phức tạp"},
-  {"db_id": "superhero", "count": 52, "gold_joins": 1.60, "dummy_joins": 0.60, "reduction_pct": 62.5, "view_leaks": 13, "d_tokens": 58.6, "v_tokens": 107.1, "notes": "CSDL gốc của Paper, JOIN cao nhất (1.60), tỷ lệ rò rỉ view cao ở Stage 2"},
-  {"db_id": "card_games", "count": 52, "gold_joins": 0.85, "dummy_joins": 0.71, "reduction_pct": 16.5, "view_leaks": 2, "d_tokens": 49.2, "v_tokens": 146.8, "notes": "Các bảng bài Magic & luật chơi, nhiều JOIN tự nhiên"},
-  {"db_id": "european_football_2", "count": 51, "gold_joins": 0.84, "dummy_joins": 0.18, "reduction_pct": 78.6, "view_leaks": 0, "d_tokens": 57.7, "v_tokens": 123.8, "notes": "View giảm JOIN cực mạnh (-78.6%), 0 lỗi rò rỉ view"},
-  {"db_id": "thrombosis_prediction", "count": 50, "gold_joins": 0.84, "dummy_joins": 0.24, "reduction_pct": 71.4, "view_leaks": 0, "d_tokens": 63.9, "v_tokens": 152.5, "notes": "Dữ liệu y tế chẩn đoán huyết khối, view làm phẳng rất hiệu quả"},
-  {"db_id": "codebase_community", "count": 49, "gold_joins": 0.84, "dummy_joins": 0.33, "reduction_pct": 60.7, "view_leaks": 1, "d_tokens": 48.0, "v_tokens": 104.9, "notes": "Diễn đàn hỏi đáp (posts, comments, users)"},
-  {"db_id": "student_club", "count": 48, "gold_joins": 0.88, "dummy_joins": 0.40, "reduction_pct": 54.5, "view_leaks": 1, "d_tokens": 50.3, "v_tokens": 115.2, "notes": "Quản lý câu lạc bộ sinh viên, ngân sách và sự kiện"},
-  {"db_id": "toxicology", "count": 40, "gold_joins": 1.25, "dummy_joins": 0.78, "reduction_pct": 37.6, "view_leaks": 0, "d_tokens": 60.4, "v_tokens": 134.3, "notes": "Cấu trúc hóa học phân tử, liên kết nguyên tử"},
-  {"db_id": "financial", "count": 32, "gold_joins": 1.41, "dummy_joins": 0.75, "reduction_pct": 46.8, "view_leaks": 0, "d_tokens": 74.6, "v_tokens": 159.5, "notes": "Giao dịch tài khoản ngân hàng, vay vốn tín dụng"},
-  {"db_id": "debit_card_specializing", "count": 30, "gold_joins": 1.00, "dummy_joins": 0.37, "reduction_pct": 63.0, "view_leaks": 1, "d_tokens": 78.2, "v_tokens": 174.0, "notes": "Chi tiêu thẻ ghi nợ cây xăng, phân khúc khách hàng"},
-  {"db_id": "california_schools", "count": 30, "gold_joins": 0.93, "dummy_joins": 0.07, "reduction_pct": 92.5, "view_leaks": 1, "d_tokens": 71.0, "v_tokens": 142.5, "notes": "Điểm thi SAT và trường học, View triệt tiêu 92.5% JOIN"}
-];
+const DB_NOTES = {
+  formula_1: 'Đua xe F1: chặng đua, tay đua, đội, kết quả',
+  superhero: 'Siêu anh hùng và các bảng tra cứu, là ví dụ của paper',
+  card_games: 'Bài Magic: thẻ bài, luật, bản dịch',
+  european_football_2: 'Bóng đá châu Âu: cầu thủ, đội, trận đấu',
+  thrombosis_prediction: 'Dữ liệu y tế về huyết khối',
+  codebase_community: 'Diễn đàn hỏi đáp: bài viết, bình luận, người dùng',
+  student_club: 'Câu lạc bộ sinh viên: sự kiện, ngân sách, thành viên',
+  toxicology: 'Phân tử, nguyên tử và liên kết hóa học',
+  financial: 'Ngân hàng: tài khoản, giao dịch, khoản vay',
+  debit_card_specializing: 'Giao dịch thẻ tại cây xăng và phân khúc khách hàng',
+  california_schools: 'Trường học California và điểm SAT',
+};
 
-const DEFAULT_MODEL_COMPARISON = [
-  {"aspect": "Mô hình chính", "paper": "GPT-3.5-turbo / GPT-4 / GPT-4-turbo", "ours": "Qwen2.5-Coder-7B-Instruct", "verdict": "Mô hình ta chuyên sâu cho lập trình & SQL (cuối 2024)"},
-  {"aspect": "Môi trường triển khai", "paper": "Cloud API (Máy chủ OpenAI, Mỹ)", "ours": "100% Cục bộ (Local LM Studio trên máy trạm)", "verdict": "Tự chủ hạ tầng, chạy offline không phụ thuộc internet"},
-  {"aspect": "Chi phí tài chính", "paper": "Rất tốn kém ($0.03 - $0.06 / 1k tokens, hàng trăm USD)", "ours": "0 USD (Hoàn toàn MIỄN PHÍ)", "verdict": "Tiết kiệm 100% chi phí, khả năng thực nghiệm không giới hạn"},
-  {"aspect": "Bảo mật dữ liệu (Privacy)", "paper": "Nguy cơ rò rỉ dữ liệu CSDL doanh nghiệp lên Cloud", "ours": "Bảo mật tuyệt đối (On-premises Privacy)", "verdict": "Đáp ứng tiêu chuẩn khắt khe ngành ngân hàng, y tế, quốc phòng"},
-  {"aspect": "Quy mô tham số", "paper": "~175B đến 1,800B tham số (MoE khổng lồ)", "ours": "7B tham số (SLM tinh gọn)", "verdict": "Mô hình 7B đạt 47.4% EX trực tiếp, vượt cả GPT-3.5 (45.4%)"},
-  {"aspect": "Độ ổn định & Tái lập", "paper": "Dễ bị trôi phiên bản (drift), rủi ro rate limits / timeout", "ours": "Hoàn toàn tất định (temperature=0, 100% tái lập được)", "verdict": "Đảm bảo tính khoa học và minh bạch thực nghiệm"}
-];
+const signedPercent = (value) => `${value > 0 ? '-' : '+'}${Math.abs(value).toFixed(1)}%`;
+
+function EmCard({ title, color, border, background, row }) {
+  const levels = [['simple', 'Simple (148 câu)'], ['moderate', 'Moderate (250 câu)'], ['challenging', 'Challenging (102 câu)']];
+  return (
+    <div style={{ border: `1px solid ${border}`, borderRadius: '12px', padding: '1.25rem', background }}>
+      <h4 style={{ fontWeight: '700', color, fontSize: '1rem', marginBottom: '12px' }}>{title}</h4>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
+        {levels.map(([level, label]) => (
+          <div key={level} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px dashed #e2e8f0' }}>
+            <span>{label}:</span>
+            <span>Strict: <b>{row[level].strict.toFixed(2)}%</b> | Norm AST: <b style={{ color }}>{row[level].norm.toFixed(2)}%</b></span>
+          </div>
+        ))}
+        <div style={{ marginTop: '6px', paddingTop: '8px', borderTop: `2px solid ${border}`, display: 'flex', justifyContent: 'space-between', fontWeight: '800', fontSize: '0.9rem' }}>
+          <span>TOTAL (500 câu):</span>
+          <span style={{ color }}>EM-Norm: {row.total.norm.toFixed(2)}% (Strict: {row.total.strict.toFixed(2)}%)</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const DEFAULT_FULL_TABLE_A = [
   {"source": "Paper", "model": "GPT-4", "method": "TA-SQL", "sim": 62.83, "mod": 60.40, "chall": 36.11, "total": 56.17},
@@ -56,19 +72,171 @@ const DEFAULT_FULL_TABLE_A = [
   {"source": "Paper", "model": "GPT-4", "method": "DAIL-SQL", "sim": 66.89, "mod": 44.40, "chall": 34.31, "total": 49.00},
   {"source": "Paper", "model": "GPT-4", "method": "DIN-SQL", "sim": 63.51, "mod": 43.60, "chall": 32.35, "total": 47.20},
   {"source": "Paper", "model": "GPT-4-turbo", "method": "V-SQL", "sim": 62.16, "mod": 51.60, "chall": 40.19, "total": 52.80},
-  {"source": "Paper", "model": "GPT-4-turbo", "method": "TA-SQL", "sim": 58.78, "mod": 45.60, "chall": 41.18, "total": 48.60},
-  {"source": "Paper", "model": "GPT-4-turbo", "method": "DAIL-SQL", "sim": 54.05, "mod": 47.60, "chall": 40.20, "total": 48.00},
+  {"source": "Paper", "model": "GPT-4-turbo", "method": "TA-SQL", "sim": 62.90, "mod": 48.40, "chall": 36.11, "total": 50.16},
+  {"source": "Paper", "model": "GPT-4-turbo", "method": "DAIL-SQL", "sim": 60.13, "mod": 48.80, "chall": 32.35, "total": 48.80},
   {"source": "Paper", "model": "GPT-4-turbo", "method": "DIN-SQL", "sim": 58.11, "mod": 47.60, "chall": 33.30, "total": 47.80},
   {"source": "Paper", "model": "GPT-3.5-turbo", "method": "V-SQL", "sim": 58.11, "mod": 43.60, "chall": 31.37, "total": 45.40},
   {"source": "Paper", "model": "GPT-3.5-turbo", "method": "TA-SQL", "sim": 56.75, "mod": 42.80, "chall": 27.45, "total": 43.80},
-  {"source": "Paper", "model": "GPT-3.5-turbo", "method": "DIN-SQL", "sim": 52.03, "mod": 40.00, "chall": 31.37, "total": 41.80},
-  {"source": "Paper", "model": "GPT-3.5-turbo", "method": "DAIL-SQL", "sim": 56.76, "mod": 37.20, "chall": 31.37, "total": 41.80},
-  {"source": "Ours (Local)", "model": "Qwen2.5-Coder-7B", "method": "DIRECT (E2)", "sim": 67.57, "mod": 43.60, "chall": 27.45, "total": 47.40},
-  {"source": "Ours (Local)", "model": "Qwen2.5-Coder-7B", "method": "V-SQL (E1)", "sim": 47.30, "mod": 30.80, "chall": 20.59, "total": 33.60}
+  {"source": "Paper", "model": "GPT-3.5-turbo", "method": "DIN-SQL", "sim": 49.32, "mod": 39.60, "chall": 23.52, "total": 39.20},
+  {"source": "Paper", "model": "GPT-3.5-turbo", "method": "DAIL-SQL", "sim": 52.03, "mod": 43.60, "chall": 23.52, "total": 42.00},
+  {"source": "Ours (Cloud)", "model": "GPT-6 Luna", "method": "DIRECT (có mô tả)", "sim": 72.97, "mod": 58.00, "chall": 52.94, "total": 61.40},
+  {"source": "Ours (Cloud)", "model": "GPT-6 Luna", "method": "V-SQL (paper)", "sim": 67.57, "mod": 57.20, "chall": 49.02, "total": 58.60},
+  {"source": "Ours (Local)", "model": "Qwen2.5-Coder 32B", "method": "DIRECT (có mô tả)", "sim": 70.27, "mod": 53.60, "chall": 42.16, "total": 56.20},
+  {"source": "Ours (Local)", "model": "Qwen2.5-Coder 32B", "method": "V-SQL (paper)", "sim": 64.19, "mod": 52.00, "chall": 45.10, "total": 54.20},
+  {"source": "Ours (Local)", "model": "Qwen2.5-Coder 7B", "method": "DIRECT (có mô tả)", "sim": 70.95, "mod": 45.60, "chall": 29.41, "total": 49.80},
+  {"source": "Ours (Local)", "model": "Qwen2.5-Coder 7B", "method": "V-SQL (paper)", "sim": 49.32, "mod": 34.80, "chall": 32.35, "total": 38.60},
+  {"source": "Ours (Local)", "model": "Qwen3 4B", "method": "DIRECT (có mô tả)", "sim": 61.49, "mod": 45.60, "chall": 31.37, "total": 47.40},
+  {"source": "Ours (Local)", "model": "Qwen3 4B", "method": "V-SQL (paper)", "sim": 56.08, "mod": 38.40, "chall": 31.37, "total": 42.20}
 ];
 
-export default function Dashboard({ data, loading }) {
+function pText(p) {
+  return p < 0.001 ? 'p < 0.001' : `p = ${p.toFixed(3)}`;
+}
+
+function FindingCard({ icon, title, background, border, ink, lines, note }) {
+  return (
+    <div style={{ background, border: `1px solid ${border}`, padding: '1.25rem', borderRadius: '12px' }}>
+      <h4 style={{ fontWeight: '800', color: ink, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {icon}
+        <span>{title}</span>
+      </h4>
+      <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '0.85rem', color: ink }}>
+        {lines.map((line) => <li key={line}>{line}</li>)}
+      </ul>
+      {note && <p style={{ margin: '8px 0 0', fontSize: '0.8rem', color: ink }}>{note}</p>}
+    </div>
+  );
+}
+
+function MainFindings({ runs, mechanism }) {
+  const rows = (runs || []).filter((run) => run.available && run.stage_transitions && run.view_gap);
+  if (!rows.length) return null;
+  const joinsOf = (run) => {
+    const levels = mechanism?.[run.key]?.by_difficulty;
+    return levels?.[levels.length - 1];
+  };
+  const noWin = rows.every((run) => run.vsql.ex <= run.direct.ex);
+  return (
+    <div className="card">
+      <div style={{ marginBottom: '1.25rem' }}>
+        <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Sparkles size={18} color="#eab308" />
+          <span>Nhận xét từ cấu hình chính</span>
+        </h3>
+        <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>
+          Các số được tính từ kết quả đã lưu của {rows.length} model, mỗi model chạy một lần trên cùng 500 câu.
+        </div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', lineHeight: '1.6' }}>
+        <FindingCard
+          icon={<Zap size={18} color="#4f46e5" />}
+          title={noWin ? 'V-SQL chưa cao hơn Direct trên model nào' : 'V-SQL so với Direct theo từng model'}
+          background="#f5f3ff"
+          border="#c7d2fe"
+          ink="#312e81"
+          lines={rows.map((run) => `${run.model}: V-SQL ${run.vsql.ex.toFixed(1)}%, Direct ${run.direct.ex.toFixed(1)}%. Chỉ Direct đúng ${run.pairs.direct_only} câu, chỉ V-SQL đúng ${run.pairs.vsql_only} câu, ${pText(run.pairs.p)}.`)}
+          note="p dưới 0.05 nghĩa là chênh lệch khó xảy ra do ngẫu nhiên. Trên mức đó, chưa đủ để kết luận bên nào hơn."
+        />
+        <FindingCard
+          icon={<CheckCircle2 size={18} color="#10b981" />}
+          title="View giảm JOIN ở Stage 1, nhưng chưa làm tăng độ chính xác"
+          background="#ecfdf5"
+          border="#a7f3d0"
+          ink="#064e3b"
+          lines={rows.map((run) => {
+            const joins = joinsOf(run);
+            return `${run.model}: JOIN mỗi câu từ ${joins.gold_joins.toFixed(2)} ở gold SQL xuống ${joins.dummy_joins.toFixed(2)} ở Stage 1 (giảm ${joins.reduction_pct.toFixed(0)}%). Stage 1 đúng ${run.stage1.ex.toFixed(1)}%.`;
+          })}
+        />
+        <FindingCard
+          icon={<AlertTriangle size={18} color="#f59e0b" />}
+          title="Stage 2 gỡ lại điểm, nhưng cũng làm sai một số câu"
+          background="#fffbeb"
+          border="#fde68a"
+          ink="#78350f"
+          lines={rows.map((run) => `${run.model}: sửa đúng ${run.stage_transitions['S1bad->FINok'] || 0} câu Stage 1 sai, làm sai ${run.stage_transitions['S1ok->FINbad'] || 0} câu Stage 1 đúng, sót tên view ở ${run.view_leak || 0} câu.`)}
+          note="Câu sót tên view không chạy được trên bảng gốc nên bị tính sai."
+        />
+        <FindingCard
+          icon={<Layers size={18} color="#6366f1" />}
+          title="Khoảng cách với Direct nằm ở đâu"
+          background="#f8fafc"
+          border="#e2e8f0"
+          ink="#334155"
+          lines={rows.map((run) => {
+            const gap = run.view_gap.gap;
+            const inGap = gap.direct.correct - gap.vsql.correct;
+            return `${run.model}: Direct đúng hơn V-SQL ${run.direct.correct - run.vsql.correct} câu, trong đó ${inGap} câu nằm ở ${gap.direct.n} câu view còn thiếu bảng hoặc cột.`;
+          })}
+          note="Nhóm câu này được xác định bằng gold SQL sau khi có kết quả, nên chỉ dùng để giải thích, không phải kiểm định."
+        />
+        <FindingCard
+          icon={<Server size={18} color="#6366f1" />}
+          title="Thời gian và nơi chạy"
+          background="#f8fafc"
+          border="#e2e8f0"
+          ink="#334155"
+          lines={rows.map((run) => {
+            const latency = mechanism?.[run.key]?.latency;
+            return `${run.model}: Direct ${latency?.direct.toFixed(1)} giây mỗi câu, V-SQL ${latency?.vsql.toFixed(1)} giây mỗi câu.`;
+          })}
+          note="Qwen chạy trên máy của nhóm nên schema không ra ngoài. Luna gửi schema và câu hỏi qua API. Vì khác nơi chạy, các số này không dùng để so tốc độ giữa Qwen và Luna."
+        />
+      </div>
+    </div>
+  );
+}
+
+function DifficultyComparison({ runs }) {
+  const full = (runs || []).filter((r) => r.available && r.valid && r.n === 500 && r.stage1);
+  const [key, setKey] = useState('luna_500_paper');
+  const run = full.find((r) => r.key === key) || full[0];
+  if (!run) return null;
+  const levels = [['simple', 'Simple', 148], ['moderate', 'Moderate', 250], ['challenging', 'Challenging', 102]];
+  const series = [['direct', 'Direct', 'var(--series-direct)'], ['stage1', 'Stage 1', 'var(--series-stage1)'], ['vsql', 'V-SQL', 'var(--series-vsql)']];
+  return (
+    <div className="card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '10px' }}>
+        <div>
+          <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Layers size={18} color="#4f46e5" />
+            <span>Execution Accuracy theo độ khó</span>
+          </h3>
+          <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>500 câu BIRD mini-dev, chấm trên bảng gốc</div>
+        </div>
+        <select className="pd-select" style={{ width: 'auto' }} aria-label="Chọn lần chạy" value={run.key} onChange={(e) => setKey(e.target.value)}>
+          {full.map((r) => <option key={r.key} value={r.key}>{r.title}</option>)}
+        </select>
+      </div>
+      <div className="jr-legend" style={{ padding: '0 0 0.75rem' }}>
+        {series.map(([id, label, color]) => <span key={id}><span className="pd-dot" style={{ background: color }} />{label}</span>)}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+        {levels.map(([level, label, count]) => (
+          <div key={level}>
+            <div style={{ fontSize: '0.85rem', fontWeight: '650', marginBottom: '6px' }}>{label}, {count} câu</div>
+            <div className="jr-bars">
+              {series.map(([id, name, color]) => {
+                const cell = run.by_difficulty?.[level]?.[id];
+                return (
+                  <div className="jr-bar" key={id} title={cell ? `${name}: ${cell.correct}/${cell.n} câu đúng` : name}>
+                    <span>{name}</span>
+                    <div className="jr-bar-track">{cell && <i style={{ width: `${cell.ex}%`, background: color }} />}</div>
+                    <b>{cell ? `${cell.ex.toFixed(1)}%` : 'Không đo'}</b>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function Dashboard({ data, loading, runs, main }) {
   const [subTab, setSubTab] = useState('tableA');
+  const [mainKey, setMainKey] = useState('luna_500_paper');
   const [filterTableA, setFilterTableA] = useState('all'); // 'all' or 'vsql_direct'
 
   if (loading || !data) {
@@ -80,12 +248,16 @@ export default function Dashboard({ data, loading }) {
     );
   }
 
+  const headline = (runs || []).find((r) => r.key === mainKey && r.available);
+  const mechanism = main?.mechanism?.[mainKey];
+  const joinTotal = mechanism?.by_difficulty?.[mechanism.by_difficulty.length - 1];
+  const mainRuns = (main?.keys || []).map((key) => (runs || []).find((r) => r.key === key)).filter(Boolean);
+  const totalCost = (runs || []).reduce((sum, r) => sum + (r.cost_usd || 0), 0);
   const table_a = (data.table_a && data.table_a.length > 6) ? data.table_a : DEFAULT_FULL_TABLE_A;
-  const table_b = data.table_b;
-  const table_c = data.table_c;
-  const table_d = (data.table_d && data.table_d.length > 0) ? data.table_d : DEFAULT_TABLE_D;
+  const table_c = mechanism?.by_difficulty;
+  const table_d = mechanism?.by_db;
   const dataset_stats = (data.dataset_stats && data.dataset_stats.length > 0) ? data.dataset_stats : DEFAULT_DATASET_STATS;
-  const model_comparison = (data.model_comparison && data.model_comparison.length > 0) ? data.model_comparison : DEFAULT_MODEL_COMPARISON;
+  const model_comparison = data.model_comparison || [];
 
   const filteredTableA = table_a?.filter(row => {
     if (filterTableA === 'vsql_direct') {
@@ -96,6 +268,16 @@ export default function Dashboard({ data, loading }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+      <MainConfigTable runs={runs} mainKeys={main?.keys} mechanism={main?.mechanism} />
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+        <label htmlFor="dash-model" style={{ fontSize: '0.875rem', fontWeight: '650', color: '#0f172a' }}>Xem chi tiết của model</label>
+        <select id="dash-model" className="pd-select" style={{ width: 'auto' }} value={mainKey} onChange={(e) => setMainKey(e.target.value)}>
+          {mainRuns.map((r) => <option key={r.key} value={r.key} disabled={!r.available}>{r.model}{r.available ? '' : ', đang chạy'}</option>)}
+        </select>
+        <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Các thẻ và Bảng B, C, D dưới đây đổi theo lựa chọn này.</span>
+      </div>
+
       {/* Top Metric Cards: 3 cards per row */}
       <div className="metrics-grid-3">
         {/* Card 1: Direct EX */}
@@ -105,11 +287,11 @@ export default function Dashboard({ data, loading }) {
             <span className="badge badge-primary">E2 — 500 câu</span>
           </div>
           <div style={{ fontSize: '2rem', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
-            47.40%
+            {headline?.direct ? `${headline.direct.ex.toFixed(2)}%` : '...'}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '0.78rem', color: '#10b981', fontWeight: '600' }}>
             <TrendingUp size={14} />
-            <span>Vượt GPT-3.5 V-SQL Paper (45.40%)</span>
+            <span>{headline?.direct ? `${headline.direct.correct} / ${headline.direct.n} câu đúng, ${headline.model}` : 'Chưa có kết quả'}</span>
           </div>
         </div>
 
@@ -120,11 +302,11 @@ export default function Dashboard({ data, loading }) {
             <span className="badge badge-success">E1 — 500 câu</span>
           </div>
           <div style={{ fontSize: '2rem', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.02em' }}>
-            33.60%
+            {headline?.vsql ? `${headline.vsql.ex.toFixed(2)}%` : '...'}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '0.78rem', color: '#64748b' }}>
             <CheckCircle2 size={14} color="#10b981" />
-            <span>168 / 500 câu thực thi chuẩn xác trên SQLite</span>
+            <span>{headline?.vsql ? `${headline.vsql.correct} / ${headline.vsql.n} câu đúng trên bảng gốc, gold chọn lọc theo bài báo` : 'Chưa có kết quả'}</span>
           </div>
         </div>
 
@@ -132,14 +314,14 @@ export default function Dashboard({ data, loading }) {
         <div className="card" style={{ borderLeft: '4px solid #10b981' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <span style={{ fontSize: '0.82rem', fontWeight: '600', color: '#64748b' }}>Cắt giảm JOIN Stage 1</span>
-            <span className="badge badge-success">Paper Verified</span>
+            <span className="badge badge-neutral">{headline?.model}</span>
           </div>
           <div style={{ fontSize: '2rem', fontWeight: '800', color: '#10b981', letterSpacing: '-0.02em' }}>
-            -56.2%
+            {joinTotal ? signedPercent(joinTotal.reduction_pct) : '...'}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '0.78rem', color: '#475569' }}>
             <ArrowDownRight size={14} color="#10b981" />
-            <span>1.05 ➔ 0.46 JOIN / câu (Khử ảo giác FK)</span>
+            <span>{joinTotal ? `Gold ${joinTotal.gold_joins.toFixed(2)} ➔ Stage 1 ${joinTotal.dummy_joins.toFixed(2)} JOIN mỗi câu` : 'Chưa có kết quả'}</span>
           </div>
         </div>
 
@@ -147,14 +329,14 @@ export default function Dashboard({ data, loading }) {
         <div className="card" style={{ borderLeft: '4px solid #8b5cf6' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <span style={{ fontSize: '0.82rem', fontWeight: '600', color: '#64748b' }}>Chi phí API & Triển khai</span>
-            <span className="badge badge-neutral" style={{ color: '#8b5cf6', borderColor: '#ddd6fe' }}>Local 100%</span>
+            <span className="badge badge-neutral" style={{ color: '#8b5cf6', borderColor: '#ddd6fe' }}>Luna qua API</span>
           </div>
           <div style={{ fontSize: '2rem', fontWeight: '800', color: '#8b5cf6', letterSpacing: '-0.02em' }}>
-            0 USD
+            {`$${totalCost.toFixed(2)}`}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '0.78rem', color: '#6d28d9', fontWeight: '600' }}>
             <ShieldCheck size={14} color="#8b5cf6" />
-            <span>On-premise · Tuyệt đối bảo mật dữ liệu</span>
+            <span>Tổng tiền API đã dùng. 4B, 7B và 32B chạy cục bộ, không tốn tiền API</span>
           </div>
         </div>
 
@@ -162,353 +344,34 @@ export default function Dashboard({ data, loading }) {
         <div className="card" style={{ borderLeft: '4px solid #f59e0b' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <span style={{ fontSize: '0.82rem', fontWeight: '600', color: '#64748b' }}>Tỷ lệ Rò rỉ View (Stage 2)</span>
-            <span className="badge badge-warning">Insight 7B</span>
+            <span className="badge badge-warning">{headline?.model}</span>
           </div>
           <div style={{ fontSize: '2rem', fontWeight: '800', color: '#f59e0b', letterSpacing: '-0.02em' }}>
-            4.2%
+            {joinTotal ? `${(joinTotal.view_leaks / joinTotal.count * 100).toFixed(1)}%` : '...'}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '0.78rem', color: '#64748b' }}>
             <AlertTriangle size={14} color="#f59e0b" />
-            <span>21 / 500 câu còn sót tiền tố v_* khi Decode</span>
+            <span>{joinTotal ? `${joinTotal.view_leaks} / ${joinTotal.count} câu còn sót tên view ở SQL cuối` : 'Chưa có kết quả'}</span>
           </div>
         </div>
 
-        {/* Card 6: Model Scale & Specialization */}
+        {/* Card 6: Time per question */}
         <div className="card" style={{ borderLeft: '4px solid #3b82f6' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: '600', color: '#64748b' }}>Quy mô Mô hình & Kiến trúc</span>
-            <span className="badge badge-neutral" style={{ color: '#2563eb', borderColor: '#bfdbfe' }}>SLM Coder</span>
+            <span style={{ fontSize: '0.82rem', fontWeight: '600', color: '#64748b' }}>Thời gian V-SQL mỗi câu</span>
+            <span className="badge badge-neutral" style={{ color: '#2563eb', borderColor: '#bfdbfe' }}>{headline?.model}</span>
           </div>
           <div style={{ fontSize: '2rem', fontWeight: '800', color: '#2563eb', letterSpacing: '-0.02em' }}>
-            7B Params
+            {mechanism ? `${mechanism.latency.vsql.toFixed(1)} giây` : '...'}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', fontSize: '0.78rem', color: '#1d4ed8', fontWeight: '600' }}>
             <Cpu size={14} color="#2563eb" />
-            <span>Qwen2.5-Coder · Nhỏ hơn GPT-4 ~250 lần</span>
+            <span>{mechanism ? `Direct ${mechanism.latency.direct.toFixed(1)} giây mỗi câu` : 'Chưa có kết quả'}</span>
           </div>
         </div>
       </div>
 
-      {/* Visual Comparison Progress Bars — Redesigned for Clarity */}
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '10px' }}>
-          <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Layers size={18} color="#4f46e5" />
-              <span>So sánh Execution Accuracy (EX %) theo 3 Mức Độ Khó trên BIRD mini-dev</span>
-            </h3>
-            <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>
-              Đánh giá song song trên cùng tập 500 câu hỏi của 11 CSDL SQLite thực tế
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.78rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '10px', height: '10px', background: '#4f46e5', borderRadius: '50%' }}></span>
-              <span style={{ color: '#334155', fontWeight: '600' }}>Direct Baseline</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '10px', height: '10px', background: '#06b6d4', borderRadius: '50%' }}></span>
-              <span style={{ color: '#334155', fontWeight: '600' }}>V-SQL 2-Stage</span>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: '1.25rem' }}>
-          {/* Card 1: Simple */}
-          <div 
-            style={{ 
-              background: '#ffffff', 
-              padding: '1.25rem', 
-              borderRadius: '12px', 
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px'
-            }}
-          >
-            {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="badge badge-success" style={{ fontSize: '0.78rem', padding: '3px 10px' }}>
-                  Simple
-                </span>
-                <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '500' }}>
-                  148 câu (29.6%)
-                </span>
-              </div>
-              <span 
-                style={{ 
-                  fontSize: '0.75rem', 
-                  fontWeight: '700', 
-                  color: '#4f46e5',
-                  background: '#eef2ff',
-                  padding: '2px 8px',
-                  borderRadius: '6px'
-                }}
-              >
-                Direct +20.27%
-              </span>
-            </div>
-
-            {/* Direct Row */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                <span style={{ fontWeight: '600', color: '#4338ca', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4f46e5' }} />
-                  Direct Baseline
-                </span>
-                <span style={{ fontWeight: '800', color: '#4338ca' }}>
-                  67.57% <span style={{ fontWeight: '500', color: '#94a3b8', fontSize: '0.72rem' }}>(100 câu)</span>
-                </span>
-              </div>
-              <div style={{ height: '10px', background: '#f1f5f9', borderRadius: '999px', overflow: 'hidden' }}>
-                <div 
-                  style={{ 
-                    width: '67.57%', 
-                    height: '100%', 
-                    background: 'linear-gradient(90deg, #4f46e5 0%, #6366f1 100%)',
-                    borderRadius: '999px'
-                  }} 
-                />
-              </div>
-            </div>
-
-            {/* V-SQL Row */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                <span style={{ fontWeight: '600', color: '#0891b2', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#06b6d4' }} />
-                  V-SQL 2-Stage
-                </span>
-                <span style={{ fontWeight: '800', color: '#0891b2' }}>
-                  47.30% <span style={{ fontWeight: '500', color: '#94a3b8', fontSize: '0.72rem' }}>(70 câu)</span>
-                </span>
-              </div>
-              <div style={{ height: '10px', background: '#f1f5f9', borderRadius: '999px', overflow: 'hidden' }}>
-                <div 
-                  style={{ 
-                    width: '47.30%', 
-                    height: '100%', 
-                    background: 'linear-gradient(90deg, #06b6d4 0%, #0891b2 100%)',
-                    borderRadius: '999px'
-                  }} 
-                />
-              </div>
-            </div>
-
-            {/* Meta Footer */}
-            <div style={{ paddingTop: '8px', borderTop: '1px dashed #f1f5f9', display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#94a3b8' }}>
-              <span>TB 0.68 JOIN / câu</span>
-              <span>1.70 Bảng / câu</span>
-            </div>
-          </div>
-
-          {/* Card 2: Moderate */}
-          <div 
-            style={{ 
-              background: '#ffffff', 
-              padding: '1.25rem', 
-              borderRadius: '12px', 
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px'
-            }}
-          >
-            {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="badge badge-primary" style={{ fontSize: '0.78rem', padding: '3px 10px' }}>
-                  Moderate
-                </span>
-                <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '500' }}>
-                  250 câu (50.0%)
-                </span>
-              </div>
-              <span 
-                style={{ 
-                  fontSize: '0.75rem', 
-                  fontWeight: '700', 
-                  color: '#4f46e5',
-                  background: '#eef2ff',
-                  padding: '2px 8px',
-                  borderRadius: '6px'
-                }}
-              >
-                Direct +12.80%
-              </span>
-            </div>
-
-            {/* Direct Row */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                <span style={{ fontWeight: '600', color: '#4338ca', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4f46e5' }} />
-                  Direct Baseline
-                </span>
-                <span style={{ fontWeight: '800', color: '#4338ca' }}>
-                  43.60% <span style={{ fontWeight: '500', color: '#94a3b8', fontSize: '0.72rem' }}>(109 câu)</span>
-                </span>
-              </div>
-              <div style={{ height: '10px', background: '#f1f5f9', borderRadius: '999px', overflow: 'hidden' }}>
-                <div 
-                  style={{ 
-                    width: '43.60%', 
-                    height: '100%', 
-                    background: 'linear-gradient(90deg, #4f46e5 0%, #6366f1 100%)',
-                    borderRadius: '999px'
-                  }} 
-                />
-              </div>
-            </div>
-
-            {/* V-SQL Row */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                <span style={{ fontWeight: '600', color: '#0891b2', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#06b6d4' }} />
-                  V-SQL 2-Stage
-                </span>
-                <span style={{ fontWeight: '800', color: '#0891b2' }}>
-                  30.80% <span style={{ fontWeight: '500', color: '#94a3b8', fontSize: '0.72rem' }}>(77 câu)</span>
-                </span>
-              </div>
-              <div style={{ height: '10px', background: '#f1f5f9', borderRadius: '999px', overflow: 'hidden' }}>
-                <div 
-                  style={{ 
-                    width: '30.80%', 
-                    height: '100%', 
-                    background: 'linear-gradient(90deg, #06b6d4 0%, #0891b2 100%)',
-                    borderRadius: '999px'
-                  }} 
-                />
-              </div>
-            </div>
-
-            {/* Meta Footer */}
-            <div style={{ paddingTop: '8px', borderTop: '1px dashed #f1f5f9', display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#94a3b8' }}>
-              <span>TB 1.14 JOINs / câu</span>
-              <span>2.16 Bảng / câu</span>
-            </div>
-          </div>
-
-          {/* Card 3: Challenging */}
-          <div 
-            style={{ 
-              background: '#ffffff', 
-              padding: '1.25rem', 
-              borderRadius: '12px', 
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px'
-            }}
-          >
-            {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="badge badge-warning" style={{ fontSize: '0.78rem', padding: '3px 10px' }}>
-                  Challenging
-                </span>
-                <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '500' }}>
-                  102 câu (20.4%)
-                </span>
-              </div>
-              <span 
-                style={{ 
-                  fontSize: '0.75rem', 
-                  fontWeight: '700', 
-                  color: '#4f46e5',
-                  background: '#eef2ff',
-                  padding: '2px 8px',
-                  borderRadius: '6px'
-                }}
-              >
-                Direct +6.86%
-              </span>
-            </div>
-
-            {/* Direct Row */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                <span style={{ fontWeight: '600', color: '#4338ca', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4f46e5' }} />
-                  Direct Baseline
-                </span>
-                <span style={{ fontWeight: '800', color: '#4338ca' }}>
-                  27.45% <span style={{ fontWeight: '500', color: '#94a3b8', fontSize: '0.72rem' }}>(28 câu)</span>
-                </span>
-              </div>
-              <div style={{ height: '10px', background: '#f1f5f9', borderRadius: '999px', overflow: 'hidden' }}>
-                <div 
-                  style={{ 
-                    width: '27.45%', 
-                    height: '100%', 
-                    background: 'linear-gradient(90deg, #4f46e5 0%, #6366f1 100%)',
-                    borderRadius: '999px'
-                  }} 
-                />
-              </div>
-            </div>
-
-            {/* V-SQL Row */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                <span style={{ fontWeight: '600', color: '#0891b2', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#06b6d4' }} />
-                  V-SQL 2-Stage
-                </span>
-                <span style={{ fontWeight: '800', color: '#0891b2' }}>
-                  20.59% <span style={{ fontWeight: '500', color: '#94a3b8', fontSize: '0.72rem' }}>(21 câu)</span>
-                </span>
-              </div>
-              <div style={{ height: '10px', background: '#f1f5f9', borderRadius: '999px', overflow: 'hidden' }}>
-                <div 
-                  style={{ 
-                    width: '20.59%', 
-                    height: '100%', 
-                    background: 'linear-gradient(90deg, #06b6d4 0%, #0891b2 100%)',
-                    borderRadius: '999px'
-                  }} 
-                />
-              </div>
-            </div>
-
-            {/* Meta Footer */}
-            <div style={{ paddingTop: '8px', borderTop: '1px dashed #f1f5f9', display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#94a3b8' }}>
-              <span>TB 1.39 JOINs / câu</span>
-              <span>2.42 Bảng / câu</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Highlight Insight Banner */}
-        <div 
-          style={{ 
-            marginTop: '1.25rem', 
-            padding: '10px 16px', 
-            background: '#faf5ff', 
-            borderRadius: '10px', 
-            border: '1px solid #e9d5ff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            fontSize: '0.8rem',
-            color: '#6b21a8',
-            flexWrap: 'wrap',
-            gap: '8px'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Sparkles size={15} color="#9333ea" />
-            <span><b>Phát hiện thực nghiệm:</b> Khoảng cách chênh lệch giữa Direct và V-SQL <b>thu hẹp dần</b> khi độ khó tăng (Simple lệch <b>20.27%</b> ➔ Moderate lệch <b>12.80%</b> ➔ Challenging chỉ còn lệch <b>6.86%</b>).</span>
-          </div>
-          <span style={{ fontWeight: '700', color: '#7e22ce' }}>Xu hướng: V-SQL bền bỉ hơn ở câu hỏi nhiều JOIN</span>
-        </div>
-      </div>
+      <DifficultyComparison runs={runs} />
 
       {/* Section 1: Detailed Benchmark Tables (Bảng A, B, C, D) */}
       <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
@@ -660,7 +523,7 @@ export default function Dashboard({ data, loading }) {
             </div>
             <div style={{ marginTop: '14px', fontSize: '0.78rem', color: '#64748b', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Info size={14} color="#6366f1" />
-              <span>Số liệu Paper được trích dẫn trực tiếp từ <b>Bảng 3 bài báo V-SQL (You et al., Huawei, 2024)</b>. Mô hình của nhóm chạy thực nghiệm 100% cục bộ trên phần cứng máy trạm.</span>
+              <span>Số liệu Paper được trích dẫn trực tiếp từ <b>Bảng 3 bài báo V-SQL (You et al., Huawei, 2024)</b>. Dòng của nhóm được chấm trên bảng gốc. Model khác paper nên không so trực tiếp được với dòng Paper.</span>
             </div>
           </div>
         )}
@@ -677,59 +540,12 @@ export default function Dashboard({ data, loading }) {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
-              {/* Direct Card */}
-              <div style={{ border: '1px solid #c7d2fe', borderRadius: '12px', padding: '1.25rem', background: '#faf5ff' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <h4 style={{ fontWeight: '700', color: '#4f46e5', fontSize: '1rem' }}>DIRECT Baseline (500 câu)</h4>
-                  <span className="badge badge-primary">E2</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px dashed #e2e8f0' }}>
-                    <span>Simple (148 câu):</span>
-                    <span>Strict: <b>20.27%</b> | Norm AST: <b style={{ color: '#4f46e5' }}>22.97%</b></span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px dashed #e2e8f0' }}>
-                    <span>Moderate (250 câu):</span>
-                    <span>Strict: <b>4.80%</b> | Norm AST: <b style={{ color: '#4f46e5' }}>4.80%</b></span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px dashed #e2e8f0' }}>
-                    <span>Challenging (102 câu):</span>
-                    <span>Strict: <b>1.96%</b> | Norm AST: <b style={{ color: '#4f46e5' }}>2.94%</b></span>
-                  </div>
-                  <div style={{ marginTop: '6px', paddingTop: '8px', borderTop: '2px solid #c7d2fe', display: 'flex', justifyContent: 'space-between', fontWeight: '800', fontSize: '0.9rem' }}>
-                    <span>TOTAL (500 câu):</span>
-                    <span style={{ color: '#4f46e5' }}>EM-Norm: 9.80% (Strict: 8.80%)</span>
-                  </div>
-                </div>
+            {mechanism ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+                <EmCard title={`Direct, ${headline?.model}`} color="#4f46e5" border="#c7d2fe" background="#faf5ff" row={mechanism.em.direct} />
+                <EmCard title={`V-SQL, ${headline?.model}`} color="#0891b2" border="#a5f3fc" background="#ecfeff" row={mechanism.em.vsql} />
               </div>
-
-              {/* V-SQL Card */}
-              <div style={{ border: '1px solid #a5f3fc', borderRadius: '12px', padding: '1.25rem', background: '#ecfeff' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <h4 style={{ fontWeight: '700', color: '#0891b2', fontSize: '1rem' }}>V-SQL 2-Stage Manual (500 câu)</h4>
-                  <span className="badge badge-success">E1</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px dashed #e2e8f0' }}>
-                    <span>Simple (148 câu):</span>
-                    <span>Strict: <b>4.05%</b> | Norm AST: <b style={{ color: '#0891b2' }}>10.81%</b></span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px dashed #e2e8f0' }}>
-                    <span>Moderate (250 câu):</span>
-                    <span>Strict: <b>0.80%</b> | Norm AST: <b style={{ color: '#0891b2' }}>2.40%</b></span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px dashed #e2e8f0' }}>
-                    <span>Challenging (102 câu):</span>
-                    <span>Strict: <b>0.98%</b> | Norm AST: <b style={{ color: '#0891b2' }}>1.96%</b></span>
-                  </div>
-                  <div style={{ marginTop: '6px', paddingTop: '8px', borderTop: '2px solid #a5f3fc', display: 'flex', justifyContent: 'space-between', fontWeight: '800', fontSize: '0.9rem' }}>
-                    <span>TOTAL (500 câu):</span>
-                    <span style={{ color: '#0891b2' }}>EM-Norm: 4.80% (Strict: 1.80%)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ) : <div className="pd-empty-note">Model này chưa có kết quả.</div>}
           </div>
         )}
 
@@ -768,16 +584,16 @@ export default function Dashboard({ data, loading }) {
                       >
                         <td style={{ padding: '10px 14px' }}>{row.difficulty}</td>
                         <td style={{ padding: '10px 14px' }}>{row.count}</td>
-                        <td style={{ padding: '10px 14px' }}>{row.gold_joins?.toFixed(2)}</td>
+                        <td style={{ padding: '10px 14px' }}>{row.gold_joins.toFixed(2)}</td>
                         <td style={{ padding: '10px 14px', color: '#10b981', fontWeight: '700' }}>
-                          {row.dummy_joins?.toFixed(2)}
+                          {row.dummy_joins.toFixed(2)}
                         </td>
-                        <td style={{ padding: '10px 14px' }}>{row.final_joins?.toFixed(2)}</td>
+                        <td style={{ padding: '10px 14px' }}>{row.final_joins.toFixed(2)}</td>
                         <td style={{ padding: '10px 14px', color: '#10b981', fontWeight: '800' }}>
-                          -{row.reduction_pct?.toFixed(1)}%
+                          {signedPercent(row.reduction_pct)}
                         </td>
-                        <td style={{ padding: '10px 14px', color: '#64748b' }}>{row.tokens_dummy || '—'}</td>
-                        <td style={{ padding: '10px 14px', color: '#64748b' }}>{row.tokens_final || '—'}</td>
+                        <td style={{ padding: '10px 14px', color: '#64748b' }}>{row.tokens_dummy.toFixed(1)}</td>
+                        <td style={{ padding: '10px 14px', color: '#64748b' }}>{row.tokens_final.toFixed(1)}</td>
                         <td style={{ padding: '10px 14px', color: row.view_leaks > 0 ? '#d97706' : '#10b981', fontWeight: '600' }}>
                           {row.view_leaks} câu ({((row.view_leaks / row.count) * 100).toFixed(1)}%)
                         </td>
@@ -787,9 +603,11 @@ export default function Dashboard({ data, loading }) {
                 </tbody>
               </table>
             </div>
-            <div style={{ marginTop: '14px', fontSize: '0.8rem', color: '#15803d', background: '#f0fdf4', padding: '10px 14px', borderRadius: '8px', border: '1px solid #bbf7d0' }}>
-              ✓ <b>Kết luận thực nghiệm:</b> Giả thuyết của tác giả được chứng minh chính xác 100% — Dummy SQL ở Stage 1 giảm hơn <b>56.2%</b> số lượng phép JOIN và giảm số tokens sinh mã, giúp mô hình tập trung vào việc lọc điều kiện và chọn cột đúng mà không bị ảo giác khoá ngoại (FK hallucination).
-            </div>
+            {joinTotal && headline && (
+              <div style={{ marginTop: '14px', fontSize: '0.8rem', color: '#15803d', background: '#f0fdf4', padding: '10px 14px', borderRadius: '8px', border: '1px solid #bbf7d0' }}>
+                <b>Trên {headline.model}:</b> so với gold SQL, Dummy SQL ở Stage 1 đổi số JOIN {signedPercent(joinTotal.reduction_pct)}. EX của Stage 1 đạt {headline.stage1.ex.toFixed(1)}%, V-SQL đạt {headline.vsql.ex.toFixed(1)}% và Direct đạt {headline.direct.ex.toFixed(1)}%.
+              </div>
+            )}
           </div>
         )}
 
@@ -821,24 +639,21 @@ export default function Dashboard({ data, loading }) {
                         <code>{db.db_id}</code>
                       </td>
                       <td style={{ padding: '10px 12px' }}>{db.count}</td>
-                      <td style={{ padding: '10px 12px' }}>{db.gold_joins}</td>
-                      <td style={{ padding: '10px 12px', color: '#10b981', fontWeight: '600' }}>{db.dummy_joins}</td>
+                      <td style={{ padding: '10px 12px' }}>{db.gold_joins.toFixed(2)}</td>
+                      <td style={{ padding: '10px 12px', color: '#10b981', fontWeight: '600' }}>{db.dummy_joins.toFixed(2)}</td>
                       <td style={{ padding: '10px 12px', color: '#10b981', fontWeight: '700' }}>
-                        -{db.reduction_pct}%
+                        {signedPercent(db.reduction_pct)}
                       </td>
                       <td style={{ padding: '10px 12px', color: db.view_leaks > 0 ? '#d97706' : '#10b981', fontWeight: '600' }}>
                         {db.view_leaks}
                       </td>
-                      <td style={{ padding: '10px 12px', color: '#64748b' }}>{db.d_tokens}</td>
-                      <td style={{ padding: '10px 12px', color: '#64748b' }}>{db.v_tokens}</td>
-                      <td style={{ padding: '10px 12px', fontSize: '0.78rem', color: '#475569' }}>{db.notes}</td>
+                      <td style={{ padding: '10px 12px', color: '#64748b' }}>{db.d_tokens.toFixed(1)}</td>
+                      <td style={{ padding: '10px 12px', color: '#64748b' }}>{db.v_tokens.toFixed(1)}</td>
+                      <td style={{ padding: '10px 12px', fontSize: '0.78rem', color: '#475569' }}>{DB_NOTES[db.db_id]}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-            <div style={{ marginTop: '12px', fontSize: '0.78rem', color: '#64748b' }}>
-              * <b>california_schools</b> giảm JOIN mạnh nhất (-92.5%), trong khi <b>superhero</b> là CSDL chịu rò rỉ view cao nhất (13 câu) do cấu trúc View lồng phức tạp.
             </div>
           </div>
         )}
@@ -910,15 +725,12 @@ export default function Dashboard({ data, loading }) {
           <div>
             <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Cpu size={18} color="#8b5cf6" />
-              <span>Đối chiếu Mô hình & Bài toán Chi phí: Local Open-Weights vs Proprietary Cloud API</span>
+              <span>Đối chiếu với bài báo: model, nơi chạy và chi phí</span>
             </h3>
             <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>
-              So sánh toàn diện giữa kiến trúc thực nghiệm của Nhóm (Qwen2.5-Coder-7B) và Bài báo gốc (OpenAI GPT-4/GPT-3.5)
+              Bài báo dùng model của OpenAI. Nhóm chạy cùng quy trình trên 3 model Qwen cục bộ và GPT-6 Luna qua API
             </div>
           </div>
-          <span className="badge badge-neutral" style={{ fontSize: '0.75rem', color: '#8b5cf6', borderColor: '#ddd6fe' }}>
-            Kiến trúc & Kinh tế học AI
-          </span>
         </div>
 
         <div style={{ overflowX: 'auto' }}>
@@ -951,65 +763,7 @@ export default function Dashboard({ data, loading }) {
         </div>
       </div>
 
-      {/* Section 4: Dedicated Card for Academic Insights & Thesis Discussion */}
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '10px' }}>
-          <div>
-            <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Sparkles size={18} color="#eab308" />
-              <span>Luận điểm Nghiên cứu & Phân tích Đóng góp (Phục vụ Báo cáo & Phản biện Đồ án)</span>
-            </h3>
-            <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>
-              4 Phát hiện thực nghiệm quan trọng làm cơ sở lý luận cho Báo cáo Đồ án & Thuyết trình
-            </div>
-          </div>
-          <span className="badge badge-warning" style={{ fontSize: '0.75rem' }}>
-            Thesis Defense Ready
-          </span>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', lineHeight: '1.6' }}>
-          <div style={{ background: '#f5f3ff', border: '1px solid #c7d2fe', padding: '1.25rem', borderRadius: '12px' }}>
-            <h4 style={{ fontWeight: '800', color: '#3730a3', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Zap size={18} color="#4f46e5" />
-              <span>1. Năng lực vượt trội của Coder SLM thế hệ mới (Qwen2.5-Coder-7B)</span>
-            </h4>
-            <p style={{ fontSize: '0.85rem', color: '#312e81' }}>
-              Khi chạy phương pháp <b>Direct Baseline</b> trên bảng gốc, mô hình cục bộ <b>Qwen2.5-Coder-7B</b> đạt <b>47.40% EX</b>. Điểm số này vượt qua cả <b>GPT-3.5-turbo chạy V-SQL (45.40%)</b> và <b>TA-SQL (43.80%)</b> trong bài báo gốc, đồng thời ngang ngửa với GPT-4 chạy DIN-SQL (47.20%). Điều này chứng minh rằng các mô hình ngôn ngữ chuyên sâu cho lập trình (Coder-specialized) của năm 2024–2025 có năng lực cú pháp và logic cơ sở dữ liệu cực kỳ mạnh mẽ mà không cần phụ thuộc vào mô hình thương mại đóng.
-            </p>
-          </div>
-
-          <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', padding: '1.25rem', borderRadius: '12px' }}>
-            <h4 style={{ fontWeight: '800', color: '#065f46', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <CheckCircle2 size={18} color="#10b981" />
-              <span>2. Kiểm chứng thực nghiệm tính đúng đắn của Cơ chế View (Stage 1)</span>
-            </h4>
-            <p style={{ fontSize: '0.85rem', color: '#064e3b' }}>
-              Tại Stage 1, việc sử dụng các View chuẩn hóa đã làm phẳng các quan hệ khóa ngoại phức tạp, <b>giúp giảm trung bình 56.2% số lượng phép JOIN (từ 1.05 xuống 0.46 JOIN/câu)</b>. Ở những CSDL phức tạp như <code>california_schools</code> (-92.5%) hay <code>european_football_2</code> (-78.6%), Dummy SQL hầu như không cần bất kỳ phép JOIN nào. Kết quả thực nghiệm hoàn toàn kiểm chứng đúng tuyên bố lý thuyết của nhóm tác giả Huawei (Figure 4 trong bài báo).
-            </p>
-          </div>
-
-          <div style={{ background: '#fffbeb', border: '1px solid #fde68a', padding: '1.25rem', borderRadius: '12px' }}>
-            <h4 style={{ fontWeight: '800', color: '#92400e', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <AlertTriangle size={18} color="#f59e0b" />
-              <span>3. Hiện tượng Rò rỉ View (View Leakage) và Lan truyền Sai số tại Stage 2</span>
-            </h4>
-            <p style={{ fontSize: '0.85rem', color: '#78350f' }}>
-              Khác biệt mấu chốt giữa mô hình 7B và GPT-4 (1.8T tham số) nằm ở <b>Giai đoạn 2 (Reconstruction)</b>. Trong bài báo, GPT-4 có năng lực attention cực lớn để "giải mã" (decode) ngược từ View về bảng gốc mà không để sót tên View ảo. Ngược lại, trên mô hình 7B, có <b>21 câu (4.2%)</b> bị dính lỗi <b>View Leak</b> (câu SQL cuối cùng vẫn giữ lại tên view <code>v_*</code> thay vì tên bảng thật, dẫn đến lỗi <code>no such table</code> khi thực thi trên SQLite). Đây là phát hiện thực nghiệm mang giá trị khoa học rất cao khi áp dụng framework trên mô hình mã nguồn mở cỡ nhỏ!
-            </p>
-          </div>
-
-          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '1.25rem', borderRadius: '12px' }}>
-            <h4 style={{ fontWeight: '800', color: '#0f172a', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Server size={18} color="#6366f1" />
-              <span>4. Giá trị Thực tiễn: Bài toán Kinh tế và Bảo mật Dữ liệu Doanh nghiệp</span>
-            </h4>
-            <p style={{ fontSize: '0.85rem', color: '#475569' }}>
-              Bài báo gốc thực hiện toàn bộ thí nghiệm thông qua API thương mại của OpenAI, tiêu tốn chi phí lớn và không thể triển khai trong môi trường doanh nghiệp yêu cầu bảo mật dữ liệu nghiêm ngặt (ngân hàng, tài chính, bệnh viện). Nghiên cứu của chúng ta đã chứng minh rằng có thể chạy <b>toàn bộ quy trình Text-to-SQL phức tạp 100% cục bộ (On-premises)</b> với chi phí <b>0 USD</b>, đảm bảo quyền riêng tư tuyệt đối cho schema và dữ liệu.
-            </p>
-          </div>
-        </div>
-      </div>
+      <MainFindings runs={mainRuns} mechanism={main?.mechanism} />
     </div>
   );
 }

@@ -10,8 +10,19 @@ import {
   GitBranch
 } from 'lucide-react';
 
-export default function Header({ activeTab, setActiveTab, health }) {
+export default function Header({ activeTab, setActiveTab, health, runs }) {
+  const headline = (runs || []).find((r) => r.key === 'luna_500_paper' && r.available);
   const meta = {
+    journey: {
+      category: 'TƯƠNG TÁC & HỌC THUẬT',
+      title: 'Hành trình thực nghiệm',
+      badge: '4 model'
+    },
+    pipeline: {
+      category: 'TƯƠNG TÁC & HỌC THUẬT',
+      title: 'Chạy pipeline từng bước',
+      badge: 'Direct và V-SQL'
+    },
     dashboard: {
       category: 'NGHIÊN CỨU & ĐÁNH GIÁ',
       title: 'Báo cáo & Phân tích Thực nghiệm',
@@ -35,7 +46,7 @@ export default function Header({ activeTab, setActiveTab, health }) {
     views_catalog: {
       category: 'THIẾT KẾ PHA 1 (TABLE MAPPING)',
       title: 'Kho Views Ảo & Lược đồ CSDL',
-      badge: '11 CSDL · 27 Views Khái niệm'
+      badge: '11 CSDL, 43 view'
     }
   };
 
@@ -45,6 +56,7 @@ export default function Header({ activeTab, setActiveTab, health }) {
     <header 
       style={{
         minHeight: '76px',
+        flexShrink: 0,
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(16px)',
         borderBottom: '1px solid #e2e8f0',
@@ -66,7 +78,8 @@ export default function Header({ activeTab, setActiveTab, health }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '1.5rem'
+          flexWrap: 'wrap',
+          gap: '0.75rem 1.5rem'
         }}
       >
         {/* Left: Breadcrumbs + Title */}
@@ -95,7 +108,7 @@ export default function Header({ activeTab, setActiveTab, health }) {
         </div>
 
         {/* Right: Quick Performance KPIs & Action */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           {/* Quick Result Summary Pill */}
           <div 
             style={{
@@ -109,18 +122,18 @@ export default function Header({ activeTab, setActiveTab, health }) {
               gap: '12px',
               boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
             }}
-            title="Kết quả đo thực tế trên 500 câu hỏi BIRD mini-dev"
+            title="GPT-6 Luna, view gold chọn lọc theo bài báo, 500 câu BIRD mini-dev, chấm trên bảng gốc"
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4f46e5' }} />
               <span style={{ color: '#64748b', fontWeight: '500' }}>Direct:</span>
-              <b style={{ color: '#0f172a', fontWeight: '700' }}>47.4% EX</b>
+              <b style={{ color: '#0f172a', fontWeight: '700' }}>{headline ? `${headline.direct.ex.toFixed(1)}%` : '...'} EX</b>
             </div>
             <div style={{ width: '1px', height: '14px', background: '#cbd5e1' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#06b6d4' }} />
               <span style={{ color: '#64748b', fontWeight: '500' }}>V-SQL:</span>
-              <b style={{ color: '#0f172a', fontWeight: '700' }}>33.6% EX</b>
+              <b style={{ color: '#0f172a', fontWeight: '700' }}>{headline ? `${headline.vsql.ex.toFixed(1)}%` : '...'} EX</b>
             </div>
           </div>
 

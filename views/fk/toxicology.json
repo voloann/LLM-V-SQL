@@ -1,0 +1,69 @@
+{
+  "db_id": "toxicology",
+  "mode": "fk",
+  "db_untouched": true,
+  "views": [
+    {
+      "name": "v_atom_molecule",
+      "columns": [
+        "atom_id",
+        "molecule_id",
+        "element",
+        "molecule_label",
+        "molecule_molecule_id"
+      ],
+      "source_tables": [
+        "atom",
+        "molecule"
+      ],
+      "create_sql": "CREATE VIEW v_atom_molecule AS SELECT atom.atom_id, atom.molecule_id, atom.element, molecule.label AS molecule_label, molecule.molecule_id AS molecule_molecule_id FROM atom LEFT JOIN molecule ON atom.molecule_id = molecule.molecule_id",
+      "valid": true,
+      "row_count": 9111,
+      "error": null
+    },
+    {
+      "name": "v_bond_molecule",
+      "columns": [
+        "bond_id",
+        "molecule_id",
+        "bond_type",
+        "molecule_label",
+        "molecule_molecule_id"
+      ],
+      "source_tables": [
+        "bond",
+        "molecule"
+      ],
+      "create_sql": "CREATE VIEW v_bond_molecule AS SELECT bond.bond_id, bond.molecule_id, bond.bond_type, molecule.label AS molecule_label, molecule.molecule_id AS molecule_molecule_id FROM bond LEFT JOIN molecule ON bond.molecule_id = molecule.molecule_id",
+      "valid": true,
+      "row_count": 9156,
+      "error": null
+    },
+    {
+      "name": "v_connected",
+      "columns": [
+        "atom_id",
+        "atom_id2",
+        "bond_id",
+        "bond_bond_id",
+        "molecule_id",
+        "bond_type",
+        "atom_atom_id",
+        "atom_molecule_id",
+        "element",
+        "atom_2_atom_id",
+        "atom_2_molecule_id",
+        "atom_2_element"
+      ],
+      "source_tables": [
+        "atom",
+        "bond",
+        "connected"
+      ],
+      "create_sql": "CREATE VIEW v_connected AS SELECT connected.atom_id, connected.atom_id2, connected.bond_id, bond.bond_id AS bond_bond_id, bond.molecule_id, bond.bond_type, atom.atom_id AS atom_atom_id, atom.molecule_id AS atom_molecule_id, atom.element, atom_2.atom_id AS atom_2_atom_id, atom_2.molecule_id AS atom_2_molecule_id, atom_2.element AS atom_2_element FROM connected LEFT JOIN bond ON connected.bond_id = bond.bond_id LEFT JOIN atom ON connected.atom_id2 = atom.atom_id LEFT JOIN atom AS atom_2 ON connected.atom_id = atom_2.atom_id",
+      "valid": true,
+      "row_count": 18312,
+      "error": null
+    }
+  ]
+}
