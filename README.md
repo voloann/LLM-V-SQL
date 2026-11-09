@@ -4,6 +4,12 @@ Dự án tái hiện nghiên cứu **V-SQL: A View-based Two-stage Text-to-SQL F
 
 - **Tài liệu phân tích chuyên sâu:** [PROJECT_PLAN_V-SQL.md](PROJECT_PLAN_V-SQL.md)
 - **Kế hoạch & bảng kiểm soát tiến độ:** [PROJECT_TRACKER.md](PROJECT_TRACKER.md)
+Thành viên nhóm 
+1.  Lâm Thị Anh Đào - 250201049
+2. Võ Đoàn Tố Loan - 26848115
+3. Trương Kim Lâm - 250202044
+4. Mou Sa Ka Riêm - 26848186
+
 
 ---
 
