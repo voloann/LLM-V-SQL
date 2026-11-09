@@ -1,0 +1,45 @@
+{
+  "db_id": "california_schools",
+  "mode": "manual",
+  "db_untouched": true,
+  "views": [
+    {
+      "name": "v_school_profile",
+      "columns": [
+        "CDSCode",
+        "School",
+        "District",
+        "County",
+        "City",
+        "Zip",
+        "Latitude",
+        "Longitude",
+        "Charter",
+        "FundingType",
+        "academic_year",
+        "charter_school_yn",
+        "enrollment_k12",
+        "free_meal_count",
+        "pct_eligible_free",
+        "frpm_count",
+        "pct_eligible_frpm",
+        "rtype",
+        "enroll12",
+        "NumTstTakr",
+        "AvgScrRead",
+        "AvgScrMath",
+        "AvgScrWrite",
+        "NumGE1500"
+      ],
+      "source_tables": [
+        "frpm",
+        "satscores",
+        "schools"
+      ],
+      "create_sql": "/* Views thu cong cho database california_schools (Paper V-SQL style) */ CREATE VIEW v_school_profile AS SELECT schools.CDSCode, schools.School, schools.District, schools.County, schools.City, schools.Zip, schools.Latitude, schools.Longitude, schools.Charter, schools.FundingType, frpm.\"Academic Year\" AS academic_year, frpm.\"Charter School (Y/N)\" AS charter_school_yn, frpm.\"Enrollment (K-12)\" AS enrollment_k12, frpm.\"Free Meal Count (K-12)\" AS free_meal_count, frpm.\"Percent (%) Eligible Free (K-12)\" AS pct_eligible_free, frpm.\"FRPM Count (K-12)\" AS frpm_count, frpm.\"Percent (%) Eligible FRPM (K-12)\" AS pct_eligible_frpm, satscores.rtype, satscores.enroll12, satscores.NumTstTakr, satscores.AvgScrRead, satscores.AvgScrMath, satscores.AvgScrWrite, satscores.NumGE1500 FROM schools LEFT JOIN frpm ON schools.CDSCode = frpm.CDSCode LEFT JOIN satscores ON schools.CDSCode = satscores.cds",
+      "valid": true,
+      "row_count": 17686,
+      "error": null
+    }
+  ]
+}

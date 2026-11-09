@@ -1,0 +1,251 @@
+{
+  "model": "gpt-6-luna",
+  "aborted": null,
+  "n_complete": 100,
+  "this_model": {
+    "direct": {
+      "correct": 59,
+      "n": 100,
+      "ex": 59.0
+    },
+    "stage1": {
+      "correct": 40,
+      "n": 100,
+      "ex": 40.0
+    },
+    "vsql": {
+      "correct": 50,
+      "n": 100,
+      "ex": 50.0
+    }
+  },
+  "base_7b_same_questions": {
+    "direct": {
+      "correct": 42,
+      "n": 100,
+      "ex": 42.0
+    },
+    "stage1": {
+      "correct": 30,
+      "n": 100,
+      "ex": 30.0
+    },
+    "vsql": {
+      "correct": 35,
+      "n": 100,
+      "ex": 35.0
+    }
+  },
+  "by_difficulty": {
+    "simple": {
+      "direct": {
+        "correct": 23,
+        "n": 31,
+        "ex": 74.19
+      },
+      "stage1": {
+        "correct": 14,
+        "n": 31,
+        "ex": 45.16
+      },
+      "vsql": {
+        "correct": 20,
+        "n": 31,
+        "ex": 64.52
+      }
+    },
+    "moderate": {
+      "direct": {
+        "correct": 26,
+        "n": 50,
+        "ex": 52.0
+      },
+      "stage1": {
+        "correct": 19,
+        "n": 50,
+        "ex": 38.0
+      },
+      "vsql": {
+        "correct": 22,
+        "n": 50,
+        "ex": 44.0
+      }
+    },
+    "challenging": {
+      "direct": {
+        "correct": 10,
+        "n": 19,
+        "ex": 52.63
+      },
+      "stage1": {
+        "correct": 7,
+        "n": 19,
+        "ex": 36.84
+      },
+      "vsql": {
+        "correct": 8,
+        "n": 19,
+        "ex": 42.11
+      }
+    }
+  },
+  "by_db": {
+    "california_schools": {
+      "direct": 3,
+      "stage1": 0,
+      "vsql": 2,
+      "n": 6
+    },
+    "card_games": {
+      "direct": 6,
+      "stage1": 4,
+      "vsql": 4,
+      "n": 11
+    },
+    "codebase_community": {
+      "direct": 7,
+      "stage1": 5,
+      "vsql": 7,
+      "n": 10
+    },
+    "debit_card_specializing": {
+      "direct": 3,
+      "stage1": 1,
+      "vsql": 1,
+      "n": 6
+    },
+    "european_football_2": {
+      "direct": 7,
+      "stage1": 5,
+      "vsql": 6,
+      "n": 10
+    },
+    "financial": {
+      "direct": 3,
+      "stage1": 2,
+      "vsql": 3,
+      "n": 7
+    },
+    "formula_1": {
+      "direct": 7,
+      "stage1": 4,
+      "vsql": 6,
+      "n": 13
+    },
+    "student_club": {
+      "direct": 8,
+      "stage1": 3,
+      "vsql": 5,
+      "n": 10
+    },
+    "superhero": {
+      "direct": 6,
+      "stage1": 6,
+      "vsql": 6,
+      "n": 10
+    },
+    "thrombosis_prediction": {
+      "direct": 4,
+      "stage1": 5,
+      "vsql": 5,
+      "n": 9
+    },
+    "toxicology": {
+      "direct": 5,
+      "stage1": 5,
+      "vsql": 5,
+      "n": 8
+    }
+  },
+  "direct_vs_vsql_this_model": {
+    "a_only": 13,
+    "b_only": 4,
+    "exact_p": 0.049041748046875
+  },
+  "direct_7b_vs_this_model": {
+    "a_only": 7,
+    "b_only": 24,
+    "exact_p": 0.003326892852783203
+  },
+  "vsql_7b_vs_this_model": {
+    "a_only": 5,
+    "b_only": 20,
+    "exact_p": 0.004077315330505371
+  },
+  "direct_only_breakdown": {
+    "stage1_wrong": 13,
+    "stage1_right_stage2_broke": 0
+  },
+  "stage_transitions": {
+    "S1bad->FINbad": 50,
+    "S1bad->FINok": 10,
+    "S1ok->FINok": 40
+  },
+  "classes": {
+    "direct": {
+      "correct": 59,
+      "wrong_values": 30,
+      "wrong_column_count": 10,
+      "other_error": 1
+    },
+    "stage1": {
+      "correct": 40,
+      "wrong_values": 39,
+      "wrong_column_count": 7,
+      "no such column": 4,
+      "no such function": 3,
+      "no such table": 3,
+      "other_error": 2,
+      "syntax": 2
+    },
+    "vsql": {
+      "correct": 50,
+      "wrong_values": 38,
+      "wrong_column_count": 9,
+      "no such table": 3
+    }
+  },
+  "coverage": {
+    "gap": {
+      "direct": {
+        "correct": 9,
+        "n": 23,
+        "ex": 39.13
+      },
+      "stage1": {
+        "correct": 2,
+        "n": 23,
+        "ex": 8.7
+      },
+      "vsql": {
+        "correct": 7,
+        "n": 23,
+        "ex": 30.43
+      }
+    },
+    "no_gap": {
+      "direct": {
+        "correct": 50,
+        "n": 77,
+        "ex": 64.94
+      },
+      "stage1": {
+        "correct": 38,
+        "n": 77,
+        "ex": 49.35
+      },
+      "vsql": {
+        "correct": 43,
+        "n": 77,
+        "ex": 55.84
+      }
+    }
+  },
+  "view_leak": 0,
+  "avg_latency_s": {
+    "direct": 7.5,
+    "vsql": 3.6
+  },
+  "llm_errors": 0,
+  "elapsed_s": 1119
+}

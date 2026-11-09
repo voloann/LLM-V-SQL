@@ -1,14 +1,10 @@
-# create_views.py
 import os
 import json
 import sqlite3
-from openai import OpenAI
+import config
 from prompts import get_view_creation_prompt
-from config import SELECTED_MODEL
-
-# Kết nối Local Server của LM Studio
-LM_STUDIO_URL = "http://localhost:1234/v1"
-client = OpenAI(base_url=LM_STUDIO_URL, api_key="lm-studio")
+from llm_client import call_llm, clean_sql
+from sql_utils import parse_views_from_sql, format_view_schema_header
 
 def get_db_schema(sqlite_path: str) -> str:
     """Đọc cấu trúc CREATE TABLE từ SQLite."""
@@ -19,50 +15,47 @@ def get_db_schema(sqlite_path: str) -> str:
     conn.close()
     return "\n\n".join([t[0] for t in tables if t[0] is not None])
 
-def clean_sql(text: str) -> str:
-    if "```sql" in text:
-        text = text.split("```sql")[1].split("```")[0]
-    elif "```" in text:
-        text = text.split("```")[1].split("```")[0]
-    return text.strip()
-
 def generate_view_rules_for_db(db_id: str, sqlite_path: str) -> dict:
+    """Tạo view mapping rules qua LLM hoặc từ file manual nếu có sẵn."""
     raw_schema = get_db_schema(sqlite_path)
-    prompt = get_view_creation_prompt(raw_schema)
     
-    try:
-        response = client.chat.completions.create(
-            model=SELECTED_MODEL,  # LM Studio tự động nhận diện model đang nạp
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
+    # 1. Kiểm tra xem có file view manual viết tay không
+    manual_sql_path = os.path.join(config.VIEWS_DIR, "manual", f"{db_id}.sql")
+    if os.path.exists(manual_sql_path):
+        print(f"[*] Sử dụng file manual view cho DB '{db_id}': {manual_sql_path}")
+        with open(manual_sql_path, "r", encoding="utf-8") as f:
+            views_sql = f.read().strip()
+    else:
+        # 2. Sinh tự động qua LLM
+        prompt = get_view_creation_prompt(raw_schema)
+        views_sql, stats = call_llm(
+            prompt=prompt,
+            temperature=config.TEMPERATURE,
             max_tokens=1000
         )
-        views_sql = clean_sql(response.choices[0].message.content)
-        
-        # Trích xuất header cột cho view_schema để tiết kiệm context
-        try:
-            view_schema_header = views_sql.split("FROM")[0].split("from")[0].strip()
-        except Exception:
-            view_schema_header = views_sql
+        if stats.get("error"):
+            print(f"[!] Lỗi kết nối LLM cho DB {db_id}: {stats['error']}")
+            views_sql = ""
 
-        return {
-            "view_schema": view_schema_header,
-            "view_mapping_rules": views_sql,
-            "table_schemas": raw_schema
-        }
-    except Exception as e:
-        print(f"[!] Lỗi kết nối LM Studio cho DB {db_id}: {e}")
-        return {
-            "view_schema": f"View v_{db_id}",
-            "view_mapping_rules": "",
-            "table_schemas": raw_schema
-        }
+    # 3. Trích xuất chính xác cấu trúc view bằng sqlglot (Task T1.4)
+    parsed_views = parse_views_from_sql(views_sql)
+    if parsed_views:
+        view_schema_header = format_view_schema_header(parsed_views)
+    else:
+        # Fallback nếu parse lỗi hoặc chuỗi rỗng
+        view_schema_header = views_sql if views_sql else f"v_{db_id}"
+
+    return {
+        "view_schema": view_schema_header,
+        "view_mapping_rules": views_sql,
+        "table_schemas": raw_schema,
+        "parsed_views": parsed_views
+    }
 
 def build_view_mappings():
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    db_root = os.path.join(base_dir, "mini_dev_databases")
-    out_file = os.path.join(base_dir, "data", "view_mappings.json")
-    os.makedirs(os.path.join(base_dir, "data"), exist_ok=True)
+    db_root = config.DB_ROOT
+    out_file = os.path.join(config.DATA_DIR, "view_mappings.json")
+    os.makedirs(config.DATA_DIR, exist_ok=True)
 
     existing_mappings = {}
     if os.path.exists(out_file):
@@ -87,7 +80,7 @@ def build_view_mappings():
         if not os.path.exists(sqlite_file):
             continue
 
-        print(f"[CREATE] Đang tạo view mapping cho DB '{db_id}' qua LM Studio...")
+        print(f"[CREATE] Đang tạo view mapping cho DB '{db_id}'...")
         mapping_data = generate_view_rules_for_db(db_id, sqlite_file)
         existing_mappings[db_id] = mapping_data
 

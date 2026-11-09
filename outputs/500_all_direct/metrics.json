@@ -1,0 +1,26 @@
+{
+  "run_id": "20261016-0104_direct_manual_full",
+  "method": "direct",
+  "view_mode": "manual",
+  "scope": "all",
+  "num_queries": 500,
+  "model": "qwen2.5-coder-7b-instruct",
+  "EX": {
+    "simple": 67.56756756756756,
+    "moderate": 43.6,
+    "challenging": 27.450980392156865,
+    "total": 47.4
+  },
+  "EM_strict": {
+    "simple": 20.27,
+    "moderate": 4.8,
+    "challenging": 1.96,
+    "all": 8.8
+  },
+  "EM_normalized": {
+    "simple": 22.97,
+    "moderate": 4.8,
+    "challenging": 2.94,
+    "all": 9.8
+  }
+}

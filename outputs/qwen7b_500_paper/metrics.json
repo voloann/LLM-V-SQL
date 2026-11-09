@@ -1,0 +1,307 @@
+{
+  "model": "qwen2.5-coder-16k",
+  "view_mode": "paper",
+  "schema_mode": "described",
+  "aborted": null,
+  "n_complete": 500,
+  "reused_traces": {
+    "direct": 0,
+    "vsql": 0
+  },
+  "new_spend": {
+    "usd": 0.0,
+    "prompt_tokens": 2030552,
+    "completion_tokens": 89490
+  },
+  "view_gap": {
+    "gap": {
+      "direct": {
+        "correct": 19,
+        "n": 46,
+        "ex": 41.3
+      },
+      "stage1": {
+        "correct": 8,
+        "n": 46,
+        "ex": 17.39
+      },
+      "vsql": {
+        "correct": 4,
+        "n": 46,
+        "ex": 8.7
+      }
+    },
+    "no_gap": {
+      "direct": {
+        "correct": 230,
+        "n": 454,
+        "ex": 50.66
+      },
+      "stage1": {
+        "correct": 173,
+        "n": 454,
+        "ex": 38.11
+      },
+      "vsql": {
+        "correct": 189,
+        "n": 454,
+        "ex": 41.63
+      }
+    }
+  },
+  "this_model": {
+    "direct": {
+      "correct": 249,
+      "n": 500,
+      "ex": 49.8
+    },
+    "stage1": {
+      "correct": 181,
+      "n": 500,
+      "ex": 36.2
+    },
+    "vsql": {
+      "correct": 193,
+      "n": 500,
+      "ex": 38.6
+    }
+  },
+  "base_7b_same_questions": {
+    "direct": {
+      "correct": 237,
+      "n": 500,
+      "ex": 47.4
+    },
+    "stage1": {
+      "correct": 132,
+      "n": 500,
+      "ex": 26.4
+    },
+    "vsql": {
+      "correct": 158,
+      "n": 500,
+      "ex": 31.6
+    }
+  },
+  "by_difficulty": {
+    "simple": {
+      "direct": {
+        "correct": 105,
+        "n": 148,
+        "ex": 70.95
+      },
+      "stage1": {
+        "correct": 73,
+        "n": 148,
+        "ex": 49.32
+      },
+      "vsql": {
+        "correct": 73,
+        "n": 148,
+        "ex": 49.32
+      }
+    },
+    "moderate": {
+      "direct": {
+        "correct": 114,
+        "n": 250,
+        "ex": 45.6
+      },
+      "stage1": {
+        "correct": 76,
+        "n": 250,
+        "ex": 30.4
+      },
+      "vsql": {
+        "correct": 87,
+        "n": 250,
+        "ex": 34.8
+      }
+    },
+    "challenging": {
+      "direct": {
+        "correct": 30,
+        "n": 102,
+        "ex": 29.41
+      },
+      "stage1": {
+        "correct": 32,
+        "n": 102,
+        "ex": 31.37
+      },
+      "vsql": {
+        "correct": 33,
+        "n": 102,
+        "ex": 32.35
+      }
+    }
+  },
+  "by_db": {
+    "california_schools": {
+      "direct": 7,
+      "stage1": 9,
+      "vsql": 3,
+      "n": 30
+    },
+    "card_games": {
+      "direct": 26,
+      "stage1": 17,
+      "vsql": 23,
+      "n": 52
+    },
+    "codebase_community": {
+      "direct": 22,
+      "stage1": 7,
+      "vsql": 12,
+      "n": 49
+    },
+    "debit_card_specializing": {
+      "direct": 16,
+      "stage1": 9,
+      "vsql": 9,
+      "n": 30
+    },
+    "european_football_2": {
+      "direct": 31,
+      "stage1": 28,
+      "vsql": 27,
+      "n": 51
+    },
+    "financial": {
+      "direct": 11,
+      "stage1": 5,
+      "vsql": 5,
+      "n": 32
+    },
+    "formula_1": {
+      "direct": 29,
+      "stage1": 12,
+      "vsql": 21,
+      "n": 66
+    },
+    "student_club": {
+      "direct": 35,
+      "stage1": 29,
+      "vsql": 34,
+      "n": 48
+    },
+    "superhero": {
+      "direct": 38,
+      "stage1": 35,
+      "vsql": 26,
+      "n": 52
+    },
+    "thrombosis_prediction": {
+      "direct": 20,
+      "stage1": 14,
+      "vsql": 14,
+      "n": 50
+    },
+    "toxicology": {
+      "direct": 14,
+      "stage1": 16,
+      "vsql": 19,
+      "n": 40
+    }
+  },
+  "direct_vs_vsql_this_model": {
+    "a_only": 92,
+    "b_only": 36,
+    "exact_p": 7.881599522005472e-07
+  },
+  "direct_7b_vs_this_model": {
+    "a_only": 28,
+    "b_only": 40,
+    "exact_p": 0.18181005453559343
+  },
+  "vsql_7b_vs_this_model": {
+    "a_only": 35,
+    "b_only": 70,
+    "exact_p": 0.00082145253889575
+  },
+  "direct_only_breakdown": {
+    "stage1_wrong": 67,
+    "stage1_right_stage2_broke": 25
+  },
+  "stage_transitions": {
+    "S1ok->FINok": 137,
+    "S1ok->FINbad": 44,
+    "S1bad->FINbad": 263,
+    "S1bad->FINok": 56
+  },
+  "classes": {
+    "direct": {
+      "correct": 249,
+      "wrong_values": 152,
+      "no such column": 58,
+      "wrong_column_count": 35,
+      "syntax": 2,
+      "no such table": 2,
+      "no such function": 1,
+      "other_error": 1
+    },
+    "stage1": {
+      "correct": 181,
+      "wrong_values": 155,
+      "no such column": 72,
+      "wrong_column_count": 42,
+      "no such table": 22,
+      "no such function": 15,
+      "syntax": 9,
+      "other_error": 4
+    },
+    "vsql": {
+      "correct": 193,
+      "wrong_values": 149,
+      "no such column": 104,
+      "wrong_column_count": 35,
+      "no such table": 7,
+      "syntax": 5,
+      "no such function": 4,
+      "other_error": 3
+    }
+  },
+  "coverage": {
+    "gap": {
+      "direct": {
+        "correct": 55,
+        "n": 148,
+        "ex": 37.16
+      },
+      "stage1": {
+        "correct": 33,
+        "n": 148,
+        "ex": 22.3
+      },
+      "vsql": {
+        "correct": 37,
+        "n": 148,
+        "ex": 25.0
+      }
+    },
+    "no_gap": {
+      "direct": {
+        "correct": 194,
+        "n": 352,
+        "ex": 55.11
+      },
+      "stage1": {
+        "correct": 148,
+        "n": 352,
+        "ex": 42.05
+      },
+      "vsql": {
+        "correct": 156,
+        "n": 352,
+        "ex": 44.32
+      }
+    }
+  },
+  "view_leak": 5,
+  "avg_latency_s": {
+    "direct": 1.6,
+    "vsql": 4.6
+  },
+  "llm_errors": 0,
+  "elapsed_s": 3140
+}

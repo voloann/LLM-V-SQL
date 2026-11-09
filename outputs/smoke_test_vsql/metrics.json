@@ -1,0 +1,26 @@
+{
+  "run_id": "20261015-2344_vsql_manual_full",
+  "method": "vsql",
+  "view_mode": "manual",
+  "scope": "all",
+  "num_queries": 5,
+  "model": "qwen2.5-coder-7b-instruct",
+  "EX": {
+    "simple": 0.0,
+    "moderate": 66.66666666666666,
+    "challenging": 100.0,
+    "total": 60.0
+  },
+  "EM_strict": {
+    "simple": 0.0,
+    "moderate": 0.0,
+    "challenging": 0.0,
+    "all": 0.0
+  },
+  "EM_normalized": {
+    "simple": 0.0,
+    "moderate": 0.0,
+    "challenging": 0.0,
+    "all": 0.0
+  }
+}

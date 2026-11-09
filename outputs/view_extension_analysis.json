@@ -1,0 +1,665 @@
+{
+  "questions": 500,
+  "modes": [
+    "manual",
+    "paper",
+    "fk",
+    "gold"
+  ],
+  "direct": {
+    "correct": 307,
+    "n": 500,
+    "ex": 61.4
+  },
+  "by_mode": {
+    "manual": {
+      "stage1": {
+        "correct": 203,
+        "n": 500,
+        "ex": 40.6
+      },
+      "vsql": {
+        "correct": 263,
+        "n": 500,
+        "ex": 52.6
+      },
+      "view_leak": 2,
+      "stage1_classes": {
+        "correct": 203,
+        "wrong_values": 188,
+        "wrong_column_count": 54,
+        "syntax": 19,
+        "no such column": 19,
+        "no such function": 9,
+        "no such table": 7,
+        "other_error": 1
+      },
+      "vsql_classes": {
+        "correct": 263,
+        "wrong_values": 179,
+        "wrong_column_count": 47,
+        "no such column": 5,
+        "no such table": 5,
+        "other_error": 1
+      },
+      "transitions": {
+        "S1ok->FINok": 202,
+        "S1bad->FINbad": 236,
+        "S1bad->FINok": 61,
+        "S1ok->FINbad": 1
+      },
+      "direct_only_breakdown": {
+        "stage1_wrong": 59,
+        "stage2_broke": 1
+      },
+      "traces": {
+        "stage1_prompt_tokens": 265547,
+        "stage2_prompt_tokens": 439717,
+        "completion_tokens": 66893,
+        "stage1_joins": 119,
+        "final_joins": 473,
+        "calls_failed": 0,
+        "median_latency_s": 3.149
+      }
+    },
+    "paper": {
+      "stage1": {
+        "correct": 269,
+        "n": 500,
+        "ex": 53.8
+      },
+      "vsql": {
+        "correct": 293,
+        "n": 500,
+        "ex": 58.6
+      },
+      "view_leak": 0,
+      "stage1_classes": {
+        "correct": 269,
+        "wrong_values": 161,
+        "wrong_column_count": 39,
+        "no such function": 15,
+        "syntax": 9,
+        "no such column": 5,
+        "other_error": 1,
+        "timeout": 1
+      },
+      "vsql_classes": {
+        "correct": 293,
+        "wrong_values": 162,
+        "wrong_column_count": 42,
+        "no such column": 2,
+        "other_error": 1
+      },
+      "transitions": {
+        "S1ok->FINok": 265,
+        "S1ok->FINbad": 4,
+        "S1bad->FINbad": 203,
+        "S1bad->FINok": 28
+      },
+      "direct_only_breakdown": {
+        "stage1_wrong": 39,
+        "stage2_broke": 3
+      },
+      "traces": {
+        "stage1_prompt_tokens": 605689,
+        "stage2_prompt_tokens": 452569,
+        "completion_tokens": 67332,
+        "stage1_joins": 42,
+        "final_joins": 501,
+        "calls_failed": 0,
+        "median_latency_s": 3.1159999999999997
+      }
+    },
+    "fk": {
+      "stage1": {
+        "correct": 274,
+        "n": 500,
+        "ex": 54.8
+      },
+      "vsql": {
+        "correct": 297,
+        "n": 500,
+        "ex": 59.4
+      },
+      "view_leak": 0,
+      "stage1_classes": {
+        "correct": 274,
+        "wrong_values": 156,
+        "wrong_column_count": 41,
+        "syntax": 13,
+        "no such function": 7,
+        "no such column": 6,
+        "other_error": 3
+      },
+      "vsql_classes": {
+        "correct": 297,
+        "wrong_values": 155,
+        "wrong_column_count": 43,
+        "other_error": 3,
+        "syntax": 1,
+        "timeout": 1
+      },
+      "transitions": {
+        "S1bad->FINok": 24,
+        "S1bad->FINbad": 202,
+        "S1ok->FINok": 273,
+        "S1ok->FINbad": 1
+      },
+      "direct_only_breakdown": {
+        "stage1_wrong": 29,
+        "stage2_broke": 0
+      },
+      "traces": {
+        "stage1_prompt_tokens": 972612,
+        "stage2_prompt_tokens": 482232,
+        "completion_tokens": 66639,
+        "stage1_joins": 64,
+        "final_joins": 481,
+        "calls_failed": 0,
+        "median_latency_s": 3.1180000000000003
+      }
+    },
+    "gold": {
+      "stage1": {
+        "correct": 253,
+        "n": 500,
+        "ex": 50.6
+      },
+      "vsql": {
+        "correct": 298,
+        "n": 500,
+        "ex": 59.6
+      },
+      "view_leak": 0,
+      "stage1_classes": {
+        "correct": 253,
+        "wrong_values": 172,
+        "wrong_column_count": 47,
+        "syntax": 9,
+        "no such function": 7,
+        "no such table": 4,
+        "no such column": 4,
+        "other_error": 2,
+        "timeout": 1,
+        "too_many_rows": 1
+      },
+      "vsql_classes": {
+        "correct": 298,
+        "wrong_values": 152,
+        "wrong_column_count": 47,
+        "no such column": 2,
+        "other_error": 1
+      },
+      "transitions": {
+        "S1ok->FINok": 251,
+        "S1bad->FINbad": 200,
+        "S1bad->FINok": 47,
+        "S1ok->FINbad": 2
+      },
+      "direct_only_breakdown": {
+        "stage1_wrong": 27,
+        "stage2_broke": 1
+      },
+      "traces": {
+        "stage1_prompt_tokens": 1014601,
+        "stage2_prompt_tokens": 450490,
+        "completion_tokens": 69172,
+        "stage1_joins": 46,
+        "final_joins": 516,
+        "calls_failed": 0,
+        "median_latency_s": 3.024
+      }
+    }
+  },
+  "pairs": {
+    "direct_vs_manual": {
+      "a_only": 60,
+      "b_only": 16,
+      "p": 3.850977823529724e-07
+    },
+    "direct_vs_paper": {
+      "a_only": 42,
+      "b_only": 28,
+      "p": 0.11960933562988493
+    },
+    "manual_vs_paper": {
+      "a_only": 24,
+      "b_only": 54,
+      "p": 0.0009010035205219422
+    },
+    "direct_vs_fk": {
+      "a_only": 29,
+      "b_only": 19,
+      "p": 0.19341265286193732
+    },
+    "manual_vs_fk": {
+      "a_only": 18,
+      "b_only": 52,
+      "p": 5.849547318695842e-05
+    },
+    "direct_vs_gold": {
+      "a_only": 28,
+      "b_only": 19,
+      "p": 0.24296021728332562
+    },
+    "manual_vs_gold": {
+      "a_only": 20,
+      "b_only": 55,
+      "p": 6.494900196551853e-05
+    },
+    "fk_vs_gold": {
+      "a_only": 21,
+      "b_only": 22,
+      "p": 1.0
+    },
+    "paper_vs_fk": {
+      "a_only": 21,
+      "b_only": 25,
+      "p": 0.6587380770236564
+    },
+    "paper_vs_gold": {
+      "a_only": 19,
+      "b_only": 24,
+      "p": 0.542384011856484
+    }
+  },
+  "groups": [
+    {
+      "group": "table",
+      "label": "View thủ công thiếu bảng",
+      "n": 91,
+      "direct": {
+        "correct": 41,
+        "n": 91,
+        "ex": 45.05
+      },
+      "vsql": {
+        "manual": {
+          "correct": 15,
+          "n": 91,
+          "ex": 16.48
+        },
+        "paper": {
+          "correct": 35,
+          "n": 91,
+          "ex": 38.46
+        },
+        "fk": {
+          "correct": 39,
+          "n": 91,
+          "ex": 42.86
+        },
+        "gold": {
+          "correct": 41,
+          "n": 91,
+          "ex": 45.05
+        }
+      },
+      "stage1": {
+        "manual": {
+          "correct": 6,
+          "n": 91,
+          "ex": 6.59
+        },
+        "paper": {
+          "correct": 34,
+          "n": 91,
+          "ex": 37.36
+        },
+        "fk": {
+          "correct": 38,
+          "n": 91,
+          "ex": 41.76
+        },
+        "gold": {
+          "correct": 36,
+          "n": 91,
+          "ex": 39.56
+        }
+      },
+      "pairs": {
+        "manual": {
+          "a_only": 31,
+          "b_only": 5,
+          "p": 1.2913485988974571e-05
+        },
+        "paper": {
+          "a_only": 18,
+          "b_only": 12,
+          "p": 0.361594608053565
+        },
+        "fk": {
+          "a_only": 8,
+          "b_only": 6,
+          "p": 0.79052734375
+        },
+        "gold": {
+          "a_only": 7,
+          "b_only": 7,
+          "p": 1.0
+        }
+      }
+    },
+    {
+      "group": "column",
+      "label": "View thủ công thiếu cột",
+      "n": 358,
+      "direct": {
+        "correct": 228,
+        "n": 358,
+        "ex": 63.69
+      },
+      "vsql": {
+        "manual": {
+          "correct": 214,
+          "n": 358,
+          "ex": 59.78
+        },
+        "paper": {
+          "correct": 222,
+          "n": 358,
+          "ex": 62.01
+        },
+        "fk": {
+          "correct": 219,
+          "n": 358,
+          "ex": 61.17
+        },
+        "gold": {
+          "correct": 222,
+          "n": 358,
+          "ex": 62.01
+        }
+      },
+      "stage1": {
+        "manual": {
+          "correct": 167,
+          "n": 358,
+          "ex": 46.65
+        },
+        "paper": {
+          "correct": 205,
+          "n": 358,
+          "ex": 57.26
+        },
+        "fk": {
+          "correct": 203,
+          "n": 358,
+          "ex": 56.7
+        },
+        "gold": {
+          "correct": 186,
+          "n": 358,
+          "ex": 51.96
+        }
+      },
+      "pairs": {
+        "manual": {
+          "a_only": 24,
+          "b_only": 10,
+          "p": 0.024306510109454393
+        },
+        "paper": {
+          "a_only": 22,
+          "b_only": 16,
+          "p": 0.417692190836533
+        },
+        "fk": {
+          "a_only": 20,
+          "b_only": 11,
+          "p": 0.14961278438568115
+        },
+        "gold": {
+          "a_only": 18,
+          "b_only": 12,
+          "p": 0.361594608053565
+        }
+      }
+    },
+    {
+      "group": "join",
+      "label": "View thủ công đủ bảng và cột, thiếu tổ hợp join",
+      "n": 4,
+      "direct": {
+        "correct": 1,
+        "n": 4,
+        "ex": 25.0
+      },
+      "vsql": {
+        "manual": {
+          "correct": 1,
+          "n": 4,
+          "ex": 25.0
+        },
+        "paper": {
+          "correct": 1,
+          "n": 4,
+          "ex": 25.0
+        },
+        "fk": {
+          "correct": 2,
+          "n": 4,
+          "ex": 50.0
+        },
+        "gold": {
+          "correct": 1,
+          "n": 4,
+          "ex": 25.0
+        }
+      },
+      "stage1": {
+        "manual": {
+          "correct": 1,
+          "n": 4,
+          "ex": 25.0
+        },
+        "paper": {
+          "correct": 1,
+          "n": 4,
+          "ex": 25.0
+        },
+        "fk": {
+          "correct": 1,
+          "n": 4,
+          "ex": 25.0
+        },
+        "gold": {
+          "correct": 1,
+          "n": 4,
+          "ex": 25.0
+        }
+      },
+      "pairs": {
+        "manual": {
+          "a_only": 1,
+          "b_only": 1,
+          "p": 1.0
+        },
+        "paper": {
+          "a_only": 0,
+          "b_only": 0,
+          "p": 1.0
+        },
+        "fk": {
+          "a_only": 0,
+          "b_only": 1,
+          "p": 1.0
+        },
+        "gold": {
+          "a_only": 0,
+          "b_only": 0,
+          "p": 1.0
+        }
+      }
+    },
+    {
+      "group": "none",
+      "label": "View thủ công đủ tất cả",
+      "n": 47,
+      "direct": {
+        "correct": 37,
+        "n": 47,
+        "ex": 78.72
+      },
+      "vsql": {
+        "manual": {
+          "correct": 33,
+          "n": 47,
+          "ex": 70.21
+        },
+        "paper": {
+          "correct": 35,
+          "n": 47,
+          "ex": 74.47
+        },
+        "fk": {
+          "correct": 37,
+          "n": 47,
+          "ex": 78.72
+        },
+        "gold": {
+          "correct": 34,
+          "n": 47,
+          "ex": 72.34
+        }
+      },
+      "stage1": {
+        "manual": {
+          "correct": 29,
+          "n": 47,
+          "ex": 61.7
+        },
+        "paper": {
+          "correct": 29,
+          "n": 47,
+          "ex": 61.7
+        },
+        "fk": {
+          "correct": 32,
+          "n": 47,
+          "ex": 68.09
+        },
+        "gold": {
+          "correct": 30,
+          "n": 47,
+          "ex": 63.83
+        }
+      },
+      "pairs": {
+        "manual": {
+          "a_only": 4,
+          "b_only": 0,
+          "p": 0.125
+        },
+        "paper": {
+          "a_only": 2,
+          "b_only": 0,
+          "p": 0.5
+        },
+        "fk": {
+          "a_only": 1,
+          "b_only": 1,
+          "p": 1.0
+        },
+        "gold": {
+          "a_only": 3,
+          "b_only": 0,
+          "p": 0.25
+        }
+      }
+    }
+  ],
+  "by_difficulty": {
+    "simple": {
+      "n": 148,
+      "direct": {
+        "correct": 108,
+        "n": 148,
+        "ex": 72.97
+      },
+      "vsql": {
+        "manual": {
+          "correct": 93,
+          "n": 148,
+          "ex": 62.84
+        },
+        "paper": {
+          "correct": 100,
+          "n": 148,
+          "ex": 67.57
+        },
+        "fk": {
+          "correct": 106,
+          "n": 148,
+          "ex": 71.62
+        },
+        "gold": {
+          "correct": 104,
+          "n": 148,
+          "ex": 70.27
+        }
+      }
+    },
+    "moderate": {
+      "n": 250,
+      "direct": {
+        "correct": 145,
+        "n": 250,
+        "ex": 58.0
+      },
+      "vsql": {
+        "manual": {
+          "correct": 128,
+          "n": 250,
+          "ex": 51.2
+        },
+        "paper": {
+          "correct": 143,
+          "n": 250,
+          "ex": 57.2
+        },
+        "fk": {
+          "correct": 138,
+          "n": 250,
+          "ex": 55.2
+        },
+        "gold": {
+          "correct": 143,
+          "n": 250,
+          "ex": 57.2
+        }
+      }
+    },
+    "challenging": {
+      "n": 102,
+      "direct": {
+        "correct": 54,
+        "n": 102,
+        "ex": 52.94
+      },
+      "vsql": {
+        "manual": {
+          "correct": 42,
+          "n": 102,
+          "ex": 41.18
+        },
+        "paper": {
+          "correct": 50,
+          "n": 102,
+          "ex": 49.02
+        },
+        "fk": {
+          "correct": 53,
+          "n": 102,
+          "ex": 51.96
+        },
+        "gold": {
+          "correct": 51,
+          "n": 102,
+          "ex": 50.0
+        }
+      }
+    }
+  }
+}

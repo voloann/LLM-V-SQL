@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Run Progress</title>
+<style>
+:root {
+  color-scheme: light;
+  --surface: #fcfcfb; --tile: #f4f3f0; --line: #e4e3df;
+  --ink: #0b0b0b; --ink2: #52514e; --ink3: #76756f;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --track: #ecebe7;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --surface: #1a1a19; --tile: #242423; --line: #363634;
+    --ink: #f0efec; --ink2: #c3c2b7; --ink3: #9b9a90;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --track: #30302e;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface: #1a1a19; --tile: #242423; --line: #363634;
+  --ink: #f0efec; --ink2: #c3c2b7; --ink3: #9b9a90;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --track: #30302e;
+}
+* { box-sizing: border-box; }
+html { background: var(--surface); }
+body { margin: 0 auto; max-width: 880px; padding: 20px 16px 40px; background: var(--surface); color: var(--ink);
+  font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-variant-numeric: tabular-nums; }
+h1 { font-size: 20px; margin: 0 0 2px; font-weight: 650; }
+h2 { font-size: 14px; margin: 26px 0 8px; font-weight: 650; }
+.sub { color: var(--ink2); margin: 0 0 16px; }
+.track { display: grid; grid-template-columns: 90px minmax(0, 1fr) 70px; gap: 10px; align-items: center; margin-bottom: 8px; font-size: 13px; color: var(--ink2); }
+.track .num { text-align: right; }
+.pbar { height: 10px; background: var(--track); border-radius: 5px; overflow: hidden; }
+.pbar i { display: block; height: 100%; width: 0; background: var(--ink2); border-radius: 5px; }
+.status { color: var(--ink2); display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 10px; font-size: 13px; }
+.status b { color: var(--ink); font-weight: 600; }
+.alert { display: none; margin-top: 12px; padding: 10px 14px; border-radius: 10px; background: var(--tile); font-weight: 600; }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.tile { background: var(--tile); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+.tile .k { display: flex; align-items: center; gap: 6px; color: var(--ink2); font-size: 12.5px; }
+.dot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.tile .v { font-size: 28px; font-weight: 650; margin-top: 4px; letter-spacing: -.01em; }
+.tile .n { color: var(--ink3); font-size: 12.5px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--ink2); font-size: 12.5px; margin-bottom: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.row { display: grid; grid-template-columns: 170px minmax(0, 1fr) 90px; gap: 10px; align-items: center; padding: 9px 0; border-top: 1px solid var(--line); }
+.row.wait { opacity: .45; }
+.name { min-width: 0; overflow-wrap: anywhere; }
+.name small { display: block; color: var(--ink3); font-size: 12px; }
+.bars { display: grid; gap: 2px; }
+.bar { height: 14px; display: flex; align-items: center; cursor: default; }
+.bar i { display: block; height: 8px; border-radius: 0 4px 4px 0; }
+.vals { color: var(--ink2); font-size: 12.5px; text-align: right; line-height: 14px; display: grid; gap: 2px; }
+#tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--surface); padding: 5px 8px; border-radius: 6px; font-size: 12.5px; display: none; z-index: 5; }
+.note { color: var(--ink3); font-size: 12.5px; margin-top: 18px; }
+@media (max-width: 560px) {
+  .tiles { grid-template-columns: 1fr; }
+  .row { grid-template-columns: minmax(0, 1fr) 80px; }
+  .row .bars { grid-column: 1 / -1; grid-row: 2; }
+  .vals { grid-column: 2; grid-row: 1; }
+}
+</style>
+</head>
+<body>
+<h1 id="ttl">Chạy mẫu 100 câu</h1>
+<p class="sub">Mỗi câu được chấm ngay trên bảng gốc, không có view.</p>
+
+<div class="track"><span>Direct</span><div class="pbar"><i id="pd"></i></div><span class="num" id="nd">0 / 100</span></div>
+<div class="track"><span>V-SQL</span><div class="pbar"><i id="pv"></i></div><span class="num" id="nv">0 / 100</span></div>
+<div class="status">
+  <span id="st">Đang khởi động</span>
+  <span>Đã chạy <b id="el">0s</b></span>
+  <span id="eta"></span>
+  <span id="spd"></span>
+  <span>Lỗi LLM: <b id="er">0</b></span>
+</div>
+<div class="alert" id="alert"></div>
+<div class="tiles" id="tiles"></div>
+
+<h2>Theo database</h2>
+<div class="legend" id="lg"></div>
+<div id="dbs"></div>
+<h2>Theo độ khó</h2>
+<div id="diffs"></div>
+<p class="note">So sánh đáng tin nhất là theo cặp: cùng một câu, khác phương pháp hoặc khác model.</p>
+<div id="tip"></div>
+
+<script>
+const S = [
+  { key: 'direct', run: 'direct', label: 'Direct', color: 'var(--s1)' },
+  { key: 'stage1', run: 'vsql', label: 'Stage 1 (dummy)', color: 'var(--s2)' },
+  { key: 'vsql', run: 'vsql', label: 'V-SQL final', color: 'var(--s3)' },
+];
+const $ = id => document.getElementById(id);
+const pct = (a, b) => b ? a / b * 100 : 0;
+const fmtT = s => { s = Math.round(s); if (s < 60) return s + 's'; const m = Math.floor(s / 60); return m < 60 ? m + 'm ' + String(s % 60).padStart(2, '0') + 's' : Math.floor(m / 60) + 'h ' + String(m % 60).padStart(2, '0') + 'm'; };
+$('tiles').innerHTML = S.map(s => `<div class="tile"><div class="k"><span class="dot" style="background:${s.color}"></span>${s.label}</div>
+  <div class="v" id="v-${s.key}">–</div><div class="n" id="n-${s.key}">Chưa có câu nào</div><div class="n" id="b-${s.key}"></div></div>`).join('');
+$('lg').innerHTML = S.map(s => `<span><span class="dot" style="background:${s.color}"></span>${s.label}</span>`).join('');
+
+function rowsHtml(items) {
+  return items.map(([name, o]) => {
+    const any = o.direct_done + o.vsql_done;
+    const bars = S.map(s => {
+      const d = o[s.run + '_done'], p = pct(o[s.key], d);
+      return `<div class="bar" data-tip="${name} · ${s.label}: ${d ? p.toFixed(0) + '% (' + o[s.key] + '/' + d + ')' : 'chưa chạy'}"><i style="width:${p}%;background:${s.color}"></i></div>`;
+    }).join('');
+    const vals = S.map(s => { const d = o[s.run + '_done']; return `<div>${d ? pct(o[s.key], d).toFixed(0) + '%' : '–'}</div>`; }).join('');
+    return `<div class="row ${any ? '' : 'wait'}"><div class="name">${name}<small>${o.n} câu</small></div><div class="bars">${bars}</div><div class="vals">${vals}</div></div>`;
+  }).join('');
+}
+
+function render(p) {
+  $('ttl').textContent = `Chạy mẫu ${p.total} câu với ${p.label || p.model}`;
+  $('pd').style.width = pct(p.done.direct, p.total) + '%'; $('pv').style.width = pct(p.done.vsql, p.total) + '%';
+  $('nd').textContent = `${p.done.direct} / ${p.total}`; $('nv').textContent = `${p.done.vsql} / ${p.total}`;
+  $('el').textContent = fmtT(p.elapsed); $('er').textContent = p.llm_errors;
+  const sd = p.done.direct ? p.latency.direct / p.done.direct : 0, sv = p.done.vsql ? p.latency.vsql / p.done.vsql : 0;
+  const md = p.median ? p.median.direct : sd, mv = p.median ? p.median.vsql : sv, tag = p.median ? 'Trung vị: ' : '';
+  $('spd').innerHTML = (md || mv ? tag : '') + (md ? `Direct <b>${md.toFixed(1)}s</b>/câu` : '') + (mv ? ` · V-SQL <b>${mv.toFixed(1)}s</b>/câu` : '');
+  if (p.status === 'running') {
+    $('st').innerHTML = `Đang chạy <b>${p.phase === 'direct' ? 'Direct' : 'V-SQL'}</b>` + (p.current ? ` · ${p.current}` : '');
+    const left = (p.total - p.done.direct) * (sd || 0) + (p.total - p.done.vsql) * (sv || (sd * 2.5));
+    $('eta').textContent = sd ? `Còn khoảng ${fmtT(left)}` : '';
+  } else {
+    $('eta').textContent = '';
+    $('st').innerHTML = p.status === 'done' ? '<b>Hoàn tất</b>' : '<b>Đã dừng</b>';
+    if (p.status === 'error') { $('alert').style.display = 'block'; $('alert').textContent = 'Dừng do lỗi: ' + p.message; }
+  }
+  S.forEach(s => {
+    const d = p.done[s.run], b = p.base[s.key];
+    $('v-' + s.key).textContent = d ? pct(p.ok[s.key], d).toFixed(1) + '%' : '–';
+    $('n-' + s.key).textContent = d ? `${p.ok[s.key]} / ${d} đúng` : 'Chưa có câu nào';
+    $('b-' + s.key).textContent = b.n ? `7B cùng các câu này: ${pct(b.ok, b.n).toFixed(1)}%` : '';
+  });
+  $('dbs').innerHTML = rowsHtml(Object.entries(p.by_db));
+  $('diffs').innerHTML = rowsHtml(Object.entries(p.by_diff));
+}
+
+const tip = $('tip');
+document.addEventListener('mousemove', e => {
+  const t = e.target.closest && e.target.closest('[data-tip]');
+  if (!t) { tip.style.display = 'none'; return; }
+  tip.textContent = t.dataset.tip; tip.style.display = 'block';
+  tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + 'px';
+  tip.style.top = (e.clientY + 14) + 'px';
+});
+
+let last = null;
+async function poll() {
+  try {
+    const r = await fetch('/progress', { cache: 'no-store' });
+    last = await r.json();
+    render(last);
+    if (last.status !== 'running') return;
+  } catch (e) {
+    if (last) { $('st').textContent = 'Mất kết nối tới tiến trình chạy'; return; }
+  }
+  setTimeout(poll, 1500);
+}
+poll();
+</script>
+</body>
+</html>

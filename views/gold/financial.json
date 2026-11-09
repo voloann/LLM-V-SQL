@@ -1,0 +1,388 @@
+{
+  "db_id": "financial",
+  "mode": "gold",
+  "db_untouched": true,
+  "views": [
+    {
+      "name": "v_client_district",
+      "columns": [
+        "client_id",
+        "gender",
+        "birth_date",
+        "district_id",
+        "district_name",
+        "region",
+        "no_of_inhabitants",
+        "avg_salary",
+        "client_district_id",
+        "A12",
+        "A13",
+        "A15"
+      ],
+      "source_tables": [
+        "client",
+        "district"
+      ],
+      "create_sql": "CREATE VIEW v_client_district AS SELECT client.client_id, client.gender, client.birth_date, district.district_id, district.A2 AS district_name, district.A3 AS region, district.A4 AS no_of_inhabitants, district.A11 AS avg_salary, client.district_id AS client_district_id, district.A12, district.A13, district.A15 FROM client LEFT JOIN district ON client.district_id = district.district_id",
+      "valid": true,
+      "row_count": 5369,
+      "error": null
+    },
+    {
+      "name": "v_account_district",
+      "columns": [
+        "account_id",
+        "frequency",
+        "account_created_date",
+        "district_id",
+        "district_name",
+        "region",
+        "avg_salary",
+        "account_district_id",
+        "A4",
+        "A12",
+        "A13",
+        "A15"
+      ],
+      "source_tables": [
+        "account",
+        "district"
+      ],
+      "create_sql": "CREATE VIEW v_account_district AS SELECT account.account_id, account.frequency, account.date AS account_created_date, district.district_id, district.A2 AS district_name, district.A3 AS region, district.A11 AS avg_salary, account.district_id AS account_district_id, district.A4, district.A12, district.A13, district.A15 FROM account LEFT JOIN district ON account.district_id = district.district_id",
+      "valid": true,
+      "row_count": 4500,
+      "error": null
+    },
+    {
+      "name": "v_account_loan",
+      "columns": [
+        "account_id",
+        "frequency",
+        "account_date",
+        "loan_id",
+        "loan_date",
+        "loan_amount",
+        "loan_duration",
+        "loan_payments",
+        "loan_status",
+        "district_id",
+        "loan_account_id"
+      ],
+      "source_tables": [
+        "account",
+        "loan"
+      ],
+      "create_sql": "CREATE VIEW v_account_loan AS SELECT account.account_id, account.frequency, account.date AS account_date, loan.loan_id, loan.date AS loan_date, loan.amount AS loan_amount, loan.duration AS loan_duration, loan.payments AS loan_payments, loan.status AS loan_status, account.district_id, loan.account_id AS loan_account_id FROM account LEFT JOIN loan ON account.account_id = loan.account_id",
+      "valid": true,
+      "row_count": 4500,
+      "error": null
+    },
+    {
+      "name": "v_account_client_disp_district",
+      "columns": [
+        "account_id",
+        "district_id",
+        "frequency",
+        "date",
+        "district_district_id",
+        "A2",
+        "A3",
+        "A4",
+        "A11",
+        "A12",
+        "A13",
+        "A15",
+        "disp_id",
+        "client_id",
+        "disp_account_id",
+        "type",
+        "client_client_id",
+        "gender",
+        "birth_date",
+        "client_district_id"
+      ],
+      "source_tables": [
+        "account",
+        "client",
+        "disp",
+        "district"
+      ],
+      "create_sql": "CREATE VIEW v_account_client_disp_district AS SELECT account.account_id, account.district_id, account.frequency, account.date, district.district_id AS district_district_id, district.A2, district.A3, district.A4, district.A11, district.A12, district.A13, district.A15, disp.disp_id, disp.client_id, disp.account_id AS disp_account_id, disp.type, client.client_id AS client_client_id, client.gender, client.birth_date, client.district_id AS client_district_id FROM account INNER JOIN district ON account.district_id = district.district_id INNER JOIN disp ON account.account_id = disp.account_id INNER JOIN client ON disp.client_id = client.client_id",
+      "valid": true,
+      "row_count": 5369,
+      "error": null
+    },
+    {
+      "name": "v_account_client_disp_loan",
+      "columns": [
+        "account_id",
+        "district_id",
+        "frequency",
+        "date",
+        "loan_account_id",
+        "loan_date",
+        "amount",
+        "duration",
+        "status",
+        "disp_id",
+        "client_id",
+        "disp_account_id",
+        "type",
+        "client_client_id",
+        "gender",
+        "birth_date",
+        "client_district_id"
+      ],
+      "source_tables": [
+        "account",
+        "client",
+        "disp",
+        "loan"
+      ],
+      "create_sql": "CREATE VIEW v_account_client_disp_loan AS SELECT account.account_id, account.district_id, account.frequency, account.date, loan.account_id AS loan_account_id, loan.date AS loan_date, loan.amount, loan.duration, loan.status, disp.disp_id, disp.client_id, disp.account_id AS disp_account_id, disp.type, client.client_id AS client_client_id, client.gender, client.birth_date, client.district_id AS client_district_id FROM account INNER JOIN loan ON account.account_id = loan.account_id INNER JOIN disp ON account.account_id = disp.account_id INNER JOIN client ON disp.client_id = client.client_id",
+      "valid": true,
+      "row_count": 827,
+      "error": null
+    },
+    {
+      "name": "v_account_client_disp_trans",
+      "columns": [
+        "account_id",
+        "district_id",
+        "frequency",
+        "date",
+        "disp_id",
+        "client_id",
+        "disp_account_id",
+        "type",
+        "trans_id",
+        "trans_account_id",
+        "trans_date",
+        "trans_type",
+        "operation",
+        "amount",
+        "balance",
+        "client_client_id",
+        "gender",
+        "birth_date",
+        "client_district_id"
+      ],
+      "source_tables": [
+        "account",
+        "client",
+        "disp",
+        "trans"
+      ],
+      "create_sql": "CREATE VIEW v_account_client_disp_trans AS SELECT account.account_id, account.district_id, account.frequency, account.date, disp.disp_id, disp.client_id, disp.account_id AS disp_account_id, disp.type, trans.trans_id, trans.account_id AS trans_account_id, trans.date AS trans_date, trans.type AS trans_type, trans.operation, trans.amount, trans.balance, client.client_id AS client_client_id, client.gender, client.birth_date, client.district_id AS client_district_id FROM account INNER JOIN disp ON account.account_id = disp.account_id INNER JOIN trans ON account.account_id = trans.account_id INNER JOIN client ON disp.client_id = client.client_id",
+      "valid": true,
+      "row_count": 1262625,
+      "error": null
+    },
+    {
+      "name": "v_account_disp_district",
+      "columns": [
+        "account_id",
+        "district_id",
+        "frequency",
+        "date",
+        "district_district_id",
+        "A2",
+        "A3",
+        "A4",
+        "A11",
+        "A12",
+        "A13",
+        "A15",
+        "disp_id",
+        "client_id",
+        "disp_account_id",
+        "type"
+      ],
+      "source_tables": [
+        "account",
+        "disp",
+        "district"
+      ],
+      "create_sql": "CREATE VIEW v_account_disp_district AS SELECT account.account_id, account.district_id, account.frequency, account.date, district.district_id AS district_district_id, district.A2, district.A3, district.A4, district.A11, district.A12, district.A13, district.A15, disp.disp_id, disp.client_id, disp.account_id AS disp_account_id, disp.type FROM account INNER JOIN district ON account.district_id = district.district_id INNER JOIN disp ON account.account_id = disp.account_id",
+      "valid": true,
+      "row_count": 5369,
+      "error": null
+    },
+    {
+      "name": "v_account_district_loan",
+      "columns": [
+        "account_id",
+        "district_id",
+        "frequency",
+        "date",
+        "loan_account_id",
+        "loan_date",
+        "amount",
+        "duration",
+        "status",
+        "district_district_id",
+        "A2",
+        "A3",
+        "A4",
+        "A11",
+        "A12",
+        "A13",
+        "A15"
+      ],
+      "source_tables": [
+        "account",
+        "district",
+        "loan"
+      ],
+      "create_sql": "CREATE VIEW v_account_district_loan AS SELECT account.account_id, account.district_id, account.frequency, account.date, loan.account_id AS loan_account_id, loan.date AS loan_date, loan.amount, loan.duration, loan.status, district.district_id AS district_district_id, district.A2, district.A3, district.A4, district.A11, district.A12, district.A13, district.A15 FROM account INNER JOIN loan ON account.account_id = loan.account_id INNER JOIN district ON account.district_id = district.district_id",
+      "valid": true,
+      "row_count": 682,
+      "error": null
+    },
+    {
+      "name": "v_account_district_trans",
+      "columns": [
+        "account_id",
+        "district_id",
+        "frequency",
+        "date",
+        "district_district_id",
+        "A2",
+        "A3",
+        "A4",
+        "A11",
+        "A12",
+        "A13",
+        "A15",
+        "trans_id",
+        "trans_account_id",
+        "trans_date",
+        "type",
+        "operation",
+        "amount",
+        "balance"
+      ],
+      "source_tables": [
+        "account",
+        "district",
+        "trans"
+      ],
+      "create_sql": "CREATE VIEW v_account_district_trans AS SELECT account.account_id, account.district_id, account.frequency, account.date, district.district_id AS district_district_id, district.A2, district.A3, district.A4, district.A11, district.A12, district.A13, district.A15, trans.trans_id, trans.account_id AS trans_account_id, trans.date AS trans_date, trans.type, trans.operation, trans.amount, trans.balance FROM account INNER JOIN district ON account.district_id = district.district_id INNER JOIN trans ON account.account_id = trans.account_id",
+      "valid": true,
+      "row_count": 1056320,
+      "error": null
+    },
+    {
+      "name": "v_account_loan_trans",
+      "columns": [
+        "account_id",
+        "district_id",
+        "frequency",
+        "date",
+        "loan_account_id",
+        "loan_date",
+        "amount",
+        "duration",
+        "status",
+        "trans_id",
+        "trans_account_id",
+        "trans_date",
+        "type",
+        "operation",
+        "trans_amount",
+        "balance"
+      ],
+      "source_tables": [
+        "account",
+        "loan",
+        "trans"
+      ],
+      "create_sql": "CREATE VIEW v_account_loan_trans AS SELECT account.account_id, account.district_id, account.frequency, account.date, loan.account_id AS loan_account_id, loan.date AS loan_date, loan.amount, loan.duration, loan.status, trans.trans_id, trans.account_id AS trans_account_id, trans.date AS trans_date, trans.type, trans.operation, trans.amount AS trans_amount, trans.balance FROM account INNER JOIN loan ON account.account_id = loan.account_id INNER JOIN trans ON account.account_id = trans.account_id",
+      "valid": true,
+      "row_count": 191556,
+      "error": null
+    },
+    {
+      "name": "v_account_trans",
+      "columns": [
+        "account_id",
+        "district_id",
+        "frequency",
+        "date",
+        "trans_id",
+        "trans_account_id",
+        "trans_date",
+        "type",
+        "operation",
+        "amount",
+        "balance"
+      ],
+      "source_tables": [
+        "account",
+        "trans"
+      ],
+      "create_sql": "CREATE VIEW v_account_trans AS SELECT account.account_id, account.district_id, account.frequency, account.date, trans.trans_id, trans.account_id AS trans_account_id, trans.date AS trans_date, trans.type, trans.operation, trans.amount, trans.balance FROM account INNER JOIN trans ON account.account_id = trans.account_id",
+      "valid": true,
+      "row_count": 1056320,
+      "error": null
+    },
+    {
+      "name": "v_card_client_disp",
+      "columns": [
+        "disp_id",
+        "type",
+        "disp_disp_id",
+        "client_id",
+        "account_id",
+        "disp_type",
+        "client_client_id",
+        "gender",
+        "birth_date",
+        "district_id"
+      ],
+      "source_tables": [
+        "card",
+        "client",
+        "disp"
+      ],
+      "create_sql": "CREATE VIEW v_card_client_disp AS SELECT card.disp_id, card.type, disp.disp_id AS disp_disp_id, disp.client_id, disp.account_id, disp.type AS disp_type, client.client_id AS client_client_id, client.gender, client.birth_date, client.district_id FROM card INNER JOIN disp ON card.disp_id = disp.disp_id INNER JOIN client ON disp.client_id = client.client_id",
+      "valid": true,
+      "row_count": 892,
+      "error": null
+    },
+    {
+      "name": "v_order",
+      "columns": [
+        "account_id",
+        "amount",
+        "k_symbol"
+      ],
+      "source_tables": [
+        "order"
+      ],
+      "create_sql": "CREATE VIEW v_order AS SELECT \"order\".account_id, \"order\".amount, \"order\".k_symbol FROM \"order\"",
+      "valid": true,
+      "row_count": 6471,
+      "error": null
+    },
+    {
+      "name": "v_trans",
+      "columns": [
+        "trans_id",
+        "account_id",
+        "date",
+        "type",
+        "operation",
+        "amount",
+        "balance"
+      ],
+      "source_tables": [
+        "trans"
+      ],
+      "create_sql": "CREATE VIEW v_trans AS SELECT trans.trans_id, trans.account_id, trans.date, trans.type, trans.operation, trans.amount, trans.balance FROM trans",
+      "valid": true,
+      "row_count": 1056320,
+      "error": null
+    }
+  ]
+}

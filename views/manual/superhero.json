@@ -1,0 +1,71 @@
+{
+  "db_id": "superhero",
+  "mode": "manual",
+  "db_untouched": true,
+  "views": [
+    {
+      "name": "v_superhero",
+      "columns": [
+        "id",
+        "superhero_name",
+        "full_name",
+        "gender",
+        "eye_colour",
+        "hair_colour",
+        "skin_colour",
+        "race",
+        "publisher_name",
+        "alignment",
+        "height_cm",
+        "weight_kg"
+      ],
+      "source_tables": [
+        "alignment",
+        "colour",
+        "gender",
+        "publisher",
+        "race",
+        "superhero"
+      ],
+      "create_sql": "/* Views thu cong cho database superhero theo dung Thiet ke Paper V-SQL (Hinh 1 & Hinh 3) */ /* 1. View chinh chua thong tin superhero kem cac bang tra cuu (lookup) */ CREATE VIEW v_superhero AS SELECT \"superhero\".\"id\", \"superhero\".\"superhero_name\" AS \"superhero_name\", \"superhero\".\"full_name\", \"gender\".\"gender\", \"eye_colour\".\"colour\" AS \"eye_colour\", \"hair_colour\".\"colour\" AS \"hair_colour\", \"skin_colour\".\"colour\" AS \"skin_colour\", \"race\".\"race\", \"publisher\".\"publisher_name\", \"alignment\".\"alignment\", \"superhero\".\"height_cm\", \"superhero\".\"weight_kg\" FROM \"superhero\" LEFT JOIN \"gender\" ON \"superhero\".\"gender_id\" = \"gender\".\"id\" LEFT JOIN \"colour\" AS eye_colour ON \"superhero\".\"eye_colour_id\" = \"eye_colour\".\"id\" LEFT JOIN \"colour\" AS hair_colour ON \"superhero\".\"hair_colour_id\" = \"hair_colour\".\"id\" LEFT JOIN \"colour\" AS skin_colour ON \"superhero\".\"skin_colour_id\" = \"skin_colour\".\"id\" LEFT JOIN \"race\" ON \"superhero\".\"race_id\" = \"race\".\"id\" LEFT JOIN \"publisher\" ON \"superhero\".\"publisher_id\" = \"publisher\".\"id\" LEFT JOIN \"alignment\" ON \"alignment\".\"id\" = \"superhero\".\"alignment_id\"",
+      "valid": true,
+      "row_count": 750,
+      "error": null
+    },
+    {
+      "name": "v_hero_power",
+      "columns": [
+        "hero_id",
+        "superhero_name",
+        "power_name"
+      ],
+      "source_tables": [
+        "hero_power",
+        "superhero",
+        "superpower"
+      ],
+      "create_sql": "/* 2. View quan he giua superhero va superpower */ CREATE VIEW v_hero_power AS SELECT \"superhero\".\"id\" AS \"hero_id\", \"superhero\".\"superhero_name\", \"superpower\".\"power_name\" FROM \"hero_power\" LEFT JOIN \"superhero\" ON \"hero_power\".\"hero_id\" = \"superhero\".\"id\" LEFT JOIN \"superpower\" ON \"hero_power\".\"power_id\" = \"superpower\".\"id\"",
+      "valid": true,
+      "row_count": 5825,
+      "error": null
+    },
+    {
+      "name": "v_hero_attribute",
+      "columns": [
+        "hero_id",
+        "superhero_name",
+        "attribute_name",
+        "attribute_value"
+      ],
+      "source_tables": [
+        "attribute",
+        "hero_attribute",
+        "superhero"
+      ],
+      "create_sql": "/* 3. View quan he giua superhero va attribute */ CREATE VIEW v_hero_attribute AS SELECT \"superhero\".\"id\" AS \"hero_id\", \"superhero\".\"superhero_name\", \"attribute\".\"attribute_name\", \"hero_attribute\".\"attribute_value\" FROM \"hero_attribute\" LEFT JOIN \"superhero\" ON \"hero_attribute\".\"hero_id\" = \"superhero\".\"id\" LEFT JOIN \"attribute\" ON \"hero_attribute\".\"attribute_id\" = \"attribute\".\"id\"",
+      "valid": true,
+      "row_count": 3738,
+      "error": null
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import sys
 import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import json
 import argparse
 import multiprocessing as mp
@@ -37,6 +38,8 @@ def execute_model(predicted_sql, ground_truth, db_place, idx, meta_time_out, sql
     return {"sql_idx": idx, "res": res}
 
 def run_sqls_parallel(sqls, db_places, num_cpus=1, meta_time_out=30.0, sql_dialect="SQLite"):
+    global exec_result
+    exec_result = []
     pool = mp.Pool(processes=num_cpus)
     for i, sql_pair in enumerate(sqls):
         predicted_sql, ground_truth = sql_pair
@@ -55,68 +58,52 @@ def run_sqls_parallel(sqls, db_places, num_cpus=1, meta_time_out=30.0, sql_diale
     pool.close()
     pool.join()
 
-def load_ground_truth(gt_path, db_root_path):
-    """Đọc Ground Truth hỗ trợ cả file JSON gốc lẫn file SQL dạng text."""
-    gt_queries = []
+def load_and_align_data(pred_path, gt_path, db_root_path):
+    """
+    Khớp nối câu hỏi dự đoán và ground truth chính xác tuyệt đối theo question_id.
+    Tránh lỗi lệch thứ tự, lệch số lượng hoặc mất câu hỏi.
+    Nếu một câu hỏi thiếu dự đoán, sẽ gán pred_sql = '' (kết quả thực thi = 0).
+    """
+    with open(gt_path, "r", encoding="utf-8") as f:
+        gt_data = json.load(f)
+
+    with open(pred_path, "r", encoding="utf-8") as f:
+        pred_data = json.load(f)
+
+    pred_dict = {}
+    if isinstance(pred_data, dict):
+        for k, v in pred_data.items():
+            val = str(v).strip()
+            sql = val.split("\t")[0].strip() if "\t" in val else val
+            pred_dict[str(k).strip()] = sql
+    elif isinstance(pred_data, list):
+        for item in pred_data:
+            if isinstance(item, dict):
+                q_id = str(item.get("question_id", "")).strip()
+                sql = item.get("predict", item.get("SQL", "")).strip()
+                if q_id:
+                    pred_dict[q_id] = sql
+
+    query_pairs = []
     db_paths_gt = []
     difficulties = []
+    q_ids = []
 
-    if gt_path.endswith(".json"):
-        with open(gt_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        for item in data:
-            sql = item.get("SQL", "").strip()
-            db_id = item.get("db_id", "").strip()
-            diff = item.get("difficulty", "simple").strip().lower()
+    for item in gt_data:
+        q_id = str(item.get("question_id", "")).strip()
+        db_id = item.get("db_id", "").strip()
+        gold_sql = item.get("SQL", "").strip()
+        diff = item.get("difficulty", "simple").strip().lower()
 
-            gt_queries.append(sql)
-            db_paths_gt.append(os.path.join(db_root_path, db_id, f"{db_id}.sqlite"))
-            difficulties.append(diff)
-    else:
-        # Xử lý định dạng text: sql \t db_name
-        with open(gt_path, "r", encoding="utf-8") as f:
-            lines = f.readlines()
-        for line in lines:
-            line_str = line.strip()
-            if not line_str:
-                continue
-            parts = line_str.split("\t")
-            if len(parts) >= 2:
-                sql = parts[0].strip()
-                db_id = parts[1].strip()
-            else:
-                sql = parts[0].strip()
-                db_id = ""
-            gt_queries.append(sql)
-            db_paths_gt.append(os.path.join(db_root_path, db_id, f"{db_id}.sqlite"))
-            difficulties.append("simple")
+        pred_sql = pred_dict.get(q_id, "")
+        db_path = os.path.join(db_root_path, db_id, f"{db_id}.sqlite")
 
-    return gt_queries, db_paths_gt, difficulties
+        query_pairs.append((pred_sql, gold_sql))
+        db_paths_gt.append(db_path)
+        difficulties.append(diff)
+        q_ids.append(q_id)
 
-def load_predictions(pred_path):
-    """Đọc file dự đoán JSON: {question_id: sql + '\t' + db_id} hoặc mảng JSON."""
-    pred_queries = []
-    with open(pred_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    if isinstance(data, dict):
-        # Sắp xếp theo question_id tăng dần để khớp chỉ mục
-        sorted_keys = sorted(data.keys(), key=lambda x: int(x) if x.isdigit() else x)
-        for k in sorted_keys:
-            val = str(data[k]).strip()
-            if "\t" in val:
-                sql = val.split("\t")[0].strip()
-            else:
-                sql = val
-            pred_queries.append(sql)
-    elif isinstance(data, list):
-        for item in data:
-            if isinstance(item, dict):
-                pred_queries.append(item.get("predict", item.get("SQL", "")).strip())
-            else:
-                pred_queries.append(str(item).split("\t")[0].strip())
-
-    return pred_queries
+    return query_pairs, db_paths_gt, difficulties, q_ids
 
 def compute_acc_by_diff(exec_results, difficulties):
     num_queries = len(exec_results)
@@ -153,6 +140,40 @@ def compute_acc_by_diff(exec_results, difficulties):
     ]
     return simple_acc, moderate_acc, challenging_acc, all_acc, count_lists
 
+def evaluate_ex(predicted_sql_path, ground_truth_path, db_root_path, num_cpus=1, meta_time_out=30.0, sql_dialect="SQLite", output_log_path=""):
+    query_pairs, db_paths_gt, difficulties, q_ids = load_and_align_data(
+        predicted_sql_path, ground_truth_path, db_root_path
+    )
+
+    run_sqls_parallel(
+        query_pairs,
+        db_places=db_paths_gt,
+        num_cpus=num_cpus,
+        meta_time_out=meta_time_out,
+        sql_dialect=sql_dialect,
+    )
+
+    sorted_results = sort_results(exec_result)
+
+    simple_acc, moderate_acc, challenging_acc, all_acc, count_lists = compute_acc_by_diff(
+        sorted_results, difficulties
+    )
+    score_lists = [simple_acc, moderate_acc, challenging_acc, all_acc]
+
+    print("\n--- CALCULATING EX RESULTS ---")
+    print_data(score_lists, count_lists, metric="EX", result_log_file=output_log_path if output_log_path else None)
+    print("===========================================================================================")
+    print(f"Finished EX evaluation for {sql_dialect} on Mini Dev")
+
+    return {
+        "simple_acc": simple_acc,
+        "moderate_acc": moderate_acc,
+        "challenging_acc": challenging_acc,
+        "all_acc": all_acc,
+        "counts": count_lists,
+        "detailed_results": [{"q_id": q_ids[i], "res": sorted_results[i]["res"]} for i in range(len(sorted_results))]
+    }
+
 if __name__ == "__main__":
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument("--predicted_sql_path", type=str, required=True)
@@ -165,39 +186,12 @@ if __name__ == "__main__":
     args_parser.add_argument("--output_log_path", type=str, default="")
     args = args_parser.parse_args()
 
-    exec_result = []
-
-    # 1. Đọc dữ liệu dự đoán và ground truth an toàn
-    pred_queries = load_predictions(args.predicted_sql_path)
-    gt_queries, db_paths_gt, difficulties = load_ground_truth(args.ground_truth_path, args.db_root_path)
-
-    # Đảm bảo số lượng 2 bên bằng nhau
-    min_len = min(len(pred_queries), len(gt_queries))
-    pred_queries = pred_queries[:min_len]
-    gt_queries = gt_queries[:min_len]
-    db_paths_gt = db_paths_gt[:min_len]
-    difficulties = difficulties[:min_len]
-
-    query_pairs = list(zip(pred_queries, gt_queries))
-
-    # 2. Chạy so sánh kết quả thực thi
-    run_sqls_parallel(
-        query_pairs,
-        db_places=db_paths_gt,
+    evaluate_ex(
+        predicted_sql_path=args.predicted_sql_path,
+        ground_truth_path=args.ground_truth_path,
+        db_root_path=args.db_root_path,
         num_cpus=args.num_cpus,
         meta_time_out=args.meta_time_out,
         sql_dialect=args.sql_dialect,
+        output_log_path=args.output_log_path,
     )
-
-    exec_result = sort_results(exec_result)
-
-    print("\n--- BẮT ĐẦU TÍNH TOÁN KẾT QUẢ EX ---")
-    simple_acc, moderate_acc, challenging_acc, all_acc, count_lists = compute_acc_by_diff(
-        exec_result, difficulties
-    )
-    score_lists = [simple_acc, moderate_acc, challenging_acc, all_acc]
-
-    print_data(score_lists, count_lists, metric="EX", result_log_file=args.output_log_path if args.output_log_path else None)
-    print("===========================================================================================")
-    print(f"Hoàn thành đánh giá EX cho {args.sql_dialect} trên tập Mini Dev")
-    print("\n")
