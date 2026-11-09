@@ -1,5 +1,5 @@
 # Môn HỆ CƠ SỞ DỮ LIỆU TIÊN TIẾN - IS6002.26.1.CH.02
-# Paper: V-SQL - A View-based Two-stage Text-to-SQL Framework 2024
+# Paper: V-SQL: A View-based Two-stage Text-to-SQL Framework 2024
 
 Dự án tái hiện nghiên cứu **V-SQL: A View-based Two-stage Text-to-SQL Framework** (2024) trên bộ dữ liệu chuẩn **BIRD mini-dev** (500 câu hỏi trên 11 CSDL).
 
